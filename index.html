@@ -3,40 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="pragma" content="no-cache">
-    <meta http-equiv="expires" content="0">
-    <title>Imager</title>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Image Resizer tool that helps you resize images quickly and easily." />
+    <meta name="author" content="Vladanila" />
+
+    <!-- Favicon Links -->
+    <link rel="icon" href="images-favicon/favicon-32x32.png" type="image/png">
+    <link rel="icon" href="images-favicon/favicon-16x16.png" type="image/png">
+    <link rel="apple-touch-icon" href="images-favicon/apple-touch-icon.png">
+    <link rel="icon" sizes="192x192" href="images-favicon/android-chrome-192x192.png">
+    <link rel="icon" sizes="512x512" href="images-favicon/android-chrome-512x512.png">
+    <link rel="icon" href="images-favicon/favicon.ico">
+
+    <title>Imager - Image Resizer</title>
+
+    <!-- Stylesheet link -->
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600&display=swap" rel="stylesheet">
 </head>
-<body class="light-mode">
+<body>
 
-    <!-- Light/Dark Mode Toggle Button with Emojis Only -->
-    <button id="mode-toggle" onclick="toggleMode()">🌙</button>
+    <div class="container">
+        <!-- Welcome Heading -->
+        <h1>Welcome to <span class="imager-title">Imager</span></h1>
 
-    <!-- Welcome Heading -->
-    <h1 id="welcome-heading">Welcome to <span class="underline">Imager</span></h1>
+        <!-- Image Upload Section -->
+        <div class="upload-container">
+            <input type="file" id="file-input" accept="image/*">
+        </div>
 
-    <!-- Modern Text -->
-    <div id="modern-text">
-        Resize your images here.
+        <!-- Dimensions Section -->
+        <div class="dimensions-container">
+            <label for="height">Height (px):</label>
+            <input type="number" id="height" placeholder="Enter height in px">
+            <label for="width">Width (px):</label>
+            <input type="number" id="width" placeholder="Enter width in px">
+        </div>
+
+        <!-- Resize Button -->
+        <button id="resize-btn">Resize</button>
+
+        <!-- Light/Dark Mode Button -->
+        <button id="mode-btn">
+            🌙
+        </button>
+
     </div>
 
-    <!-- Image Resizer Section -->
-    <div id="image-container">
-        <input type="file" id="upload" accept="image/*">
-    </div>
-
-    <!-- Resize Options -->
-    <div id="resize-options">
-        <input type="number" id="width" placeholder="Width (px)">
-        <input type="number" id="height" placeholder="Height (px)">
-        <button id="resize-button" onclick="resizeImage()">Resize</button>
-        <div id="tooltip">Please enter desired height/width in pixels</div>
-    </div>
-
-    <!-- Script -->
+    <!-- Script link -->
     <script src="script.js"></script>
 </body>
 </html>
