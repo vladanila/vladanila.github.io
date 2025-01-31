@@ -29,6 +29,6 @@
 To get started with **Imager**, you can either:
 
 1. Visit the live version here: [**Imager**](https://vladanila.github.io/)
-   This is made as a part of my hobby, feel free to use it as much as you like!
+- This is made as a part of my hobby, feel free to use it as much as you like!
    (-vladanila/ Geetartha)
 
