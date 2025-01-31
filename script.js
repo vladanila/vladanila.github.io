@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const moonIcon = document.getElementById("moon-icon");
     const body = document.body;
 
-    // Load user preference for dark/light mode
     if (localStorage.getItem("theme") === "dark") {
         body.classList.add("dark-mode");
         sunIcon.style.display = "block";
@@ -15,7 +14,6 @@ document.addEventListener("DOMContentLoaded", function () {
         moonIcon.style.display = "block";
     }
 
-    // Mode Toggle Functionality
     modeToggle.addEventListener("click", function () {
         if (body.classList.contains("light-mode")) {
             body.classList.remove("light-mode");
@@ -32,7 +30,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Image Upload Handling
     const uploadInput = document.getElementById("upload");
     const fileNameDisplay = document.getElementById("file-name");
 
@@ -45,7 +42,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// Image Resizing Functionality
 function resizeImage() {
     const fileInput = document.getElementById("upload");
     const widthInput = document.getElementById("width");
@@ -84,7 +80,6 @@ function resizeImage() {
 
             ctx.drawImage(img, 0, 0, width, height);
 
-            // Convert canvas to a downloadable image
             const resizedImageUrl = canvas.toDataURL("image/png");
             showDownloadButton(resizedImageUrl);
         };
@@ -93,12 +88,10 @@ function resizeImage() {
     reader.readAsDataURL(file);
 }
 
-// Show Download Button
 function showDownloadButton(resizedImageUrl) {
     let downloadButton = document.getElementById("download-button");
     let readyMessage = document.getElementById("ready-message");
 
-    // If the button doesn't exist, create it dynamically
     if (!downloadButton) {
         downloadButton = document.createElement("a");
         downloadButton.id = "download-button";
@@ -135,48 +128,8 @@ function showDownloadButton(resizedImageUrl) {
         document.body.appendChild(readyMessage);
     }
 
-    // Set download attributes
     downloadButton.href = resizedImageUrl;
     downloadButton.download = "resized-image.png";
     downloadButton.style.opacity = "1";
-
     readyMessage.style.opacity = "1";
-
-    // Show "Resize Another Photo" Button
-    showResizeAnotherButton();
-}
-
-// Show "Resize Another Photo" Button
-function showResizeAnotherButton() {
-    let resizeAnotherButton = document.getElementById("resize-another");
-
-    if (!resizeAnotherButton) {
-        resizeAnotherButton = document.createElement("button");
-        resizeAnotherButton.id = "resize-another";
-        resizeAnotherButton.textContent = "Resize Another Photo";
-        resizeAnotherButton.style.display = "block";
-        resizeAnotherButton.style.marginTop = "20px";
-        resizeAnotherButton.style.padding = "10px 20px";
-        resizeAnotherButton.style.border = "none";
-        resizeAnotherButton.style.borderRadius = "5px";
-        resizeAnotherButton.style.backgroundColor = "#4CAF50";
-        resizeAnotherButton.style.color = "white";
-        resizeAnotherButton.style.fontSize = "16px";
-        resizeAnotherButton.style.cursor = "pointer";
-        resizeAnotherButton.style.transition = "0.3s ease";
-
-        resizeAnotherButton.addEventListener("mouseover", function () {
-            resizeAnotherButton.style.transform = "scale(1.05)";
-        });
-
-        resizeAnotherButton.addEventListener("mouseout", function () {
-            resizeAnotherButton.style.transform = "scale(1)";
-        });
-
-        resizeAnotherButton.addEventListener("click", function () {
-            location.reload();
-        });
-
-        document.body.appendChild(resizeAnotherButton);
-    }
 }
