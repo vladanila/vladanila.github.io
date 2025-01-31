@@ -2,8 +2,8 @@
 body {
     font-family: 'Poppins', sans-serif;
     text-align: center;
-    background: linear-gradient(45deg, #ff6f61, #d14e2a);
-    color: white;
+    background-color: white;
+    color: black;
     transition: background 0.3s, color 0.3s;
     display: flex;
     flex-direction: column;
@@ -88,7 +88,7 @@ input:focus + .tooltip {
 
 /* Dark Mode */
 body.dark-mode {
-    background-color: #121212;
+    background: linear-gradient(45deg, #3c1f44, #522a59); /* Black-Purple Gradient */
     color: white;
 }
 
