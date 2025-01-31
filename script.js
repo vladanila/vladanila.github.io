@@ -29,7 +29,7 @@ document.getElementById("downloadBtn").addEventListener("click", function () {
     link.click();
 });
 
-// 🌙 Light/Dark Mode Toggle
+// Light/Dark Mode Toggle
 const themeToggle = document.getElementById("theme-toggle");
 const body = document.body;
 
@@ -52,4 +52,21 @@ themeToggle.addEventListener("click", function () {
         localStorage.setItem("theme", "light");
         themeToggle.textContent = "🌙"; // Moon for light mode
     }
+});
+
+// Tooltip for Width and Height Input Fields
+document.getElementById("width").addEventListener("focus", function () {
+    document.getElementById("width-tooltip").style.visibility = "visible";
+});
+
+document.getElementById("height").addEventListener("focus", function () {
+    document.getElementById("height-tooltip").style.visibility = "visible";
+});
+
+document.getElementById("width").addEventListener("blur", function () {
+    document.getElementById("width-tooltip").style.visibility = "hidden";
+});
+
+document.getElementById("height").addEventListener("blur", function () {
+    document.getElementById("height-tooltip").style.visibility = "hidden";
 });
