@@ -1,72 +1,70 @@
-document.getElementById("resizeBtn").addEventListener("click", function () {
-    const fileInput = document.getElementById("imageUpload").files[0];
-    const width = document.getElementById("width").value;
-    const height = document.getElementById("height").value;
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
+// Function to toggle between light and dark mode
+function toggleMode() {
+    const body = document.body;
+    const modeButton = document.getElementById("mode-toggle");
 
-    if (!fileInput) {
-        alert("Please upload an image first!");
+    if (body.classList.contains("light-mode")) {
+        body.classList.remove("light-mode");
+        body.classList.add("dark-mode");
+        modeButton.textContent = "🌞"; // Change button text to Sun emoji for Light mode
+    } else {
+        body.classList.remove("dark-mode");
+        body.classList.add("light-mode");
+        modeButton.textContent = "🌙"; // Change button text to Moon emoji for Dark mode
+    }
+}
+
+// Image Resizer Function
+function resizeImage() {
+    const width = document.getElementById('width').value;
+    const height = document.getElementById('height').value;
+    const fileInput = document.getElementById('upload');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("Please upload an image first.");
         return;
     }
 
     const img = new Image();
-    img.src = URL.createObjectURL(fileInput);
+    img.src = URL.createObjectURL(file);
+
     img.onload = function () {
-        canvas.width = width;
-        canvas.height = height;
-        ctx.drawImage(img, 0, 0, width, height);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
 
-        document.getElementById("downloadBtn").style.display = "block";
+        // Set canvas width and height based on user input or image size
+        const newWidth = width || img.width;
+        const newHeight = height || img.height;
+
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+
+        // Draw the image on the canvas
+        ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+        // Download the resized image
+        const resizedImage = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = resizedImage;
+        a.download = 'resized_image.png';
+        a.click();
     };
-});
-
-document.getElementById("downloadBtn").addEventListener("click", function () {
-    const canvas = document.getElementById("canvas");
-    const link = document.createElement("a");
-    link.download = "resized-image.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-});
-
-// Light/Dark Mode Toggle
-const themeToggle = document.getElementById("theme-toggle");
-const body = document.body;
-
-// Check for saved theme in local storage
-if (localStorage.getItem("theme") === "dark") {
-    body.classList.add("dark-mode");
-    themeToggle.textContent = "☀️"; // Change the icon to the sun
-} else {
-    themeToggle.textContent = "🌙"; // Default icon
 }
 
-// Toggle theme on button click
-themeToggle.addEventListener("click", function () {
-    body.classList.toggle("dark-mode");
-
-    if (body.classList.contains("dark-mode")) {
-        localStorage.setItem("theme", "dark");
-        themeToggle.textContent = "☀️"; // Sun for dark mode
-    } else {
-        localStorage.setItem("theme", "light");
-        themeToggle.textContent = "🌙"; // Moon for light mode
-    }
+// Tooltip for height and width input
+document.getElementById('width').addEventListener('focus', function() {
+    document.getElementById('tooltip').style.display = 'block';
 });
 
-// Tooltip for Width and Height Input Fields
-document.getElementById("width").addEventListener("focus", function () {
-    document.getElementById("width-tooltip").style.visibility = "visible";
+document.getElementById('width').addEventListener('blur', function() {
+    document.getElementById('tooltip').style.display = 'none';
 });
 
-document.getElementById("height").addEventListener("focus", function () {
-    document.getElementById("height-tooltip").style.visibility = "visible";
+document.getElementById('height').addEventListener('focus', function() {
+    document.getElementById('tooltip').style.display = 'block';
 });
 
-document.getElementById("width").addEventListener("blur", function () {
-    document.getElementById("width-tooltip").style.visibility = "hidden";
-});
-
-document.getElementById("height").addEventListener("blur", function () {
-    document.getElementById("height-tooltip").style.visibility = "hidden";
+document.getElementById('height').addEventListener('blur', function() {
+    document.getElementById('tooltip').style.display = 'none';
 });
