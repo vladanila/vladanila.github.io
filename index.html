@@ -7,18 +7,16 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Image Resizer</h1>
-        <input type="file" id="upload" accept="image/*">
-        <div>
-            <label for="width">Width: </label>
-            <input type="number" id="width" placeholder="Enter width">
-            <label for="height">Height: </label>
-            <input type="number" id="height" placeholder="Enter height">
-        </div>
-        <button onclick="resizeImage()">Resize Image</button>
-        <div id="output"></div>
-    </div>
+    <button id="theme-toggle">🌙</button>
+    
+    <h1>Welcome to Image Resizer</h1>
+    
+    <input type="file" id="imageUpload">
+    <input type="number" id="width" placeholder="Enter width">
+    <input type="number" id="height" placeholder="Enter height">
+    <button id="resizeBtn">Resize</button>
+    <canvas id="canvas"></canvas>
+    <button id="downloadBtn" style="display: none;">Download Resized Image</button>
 
     <script src="script.js"></script>
 </body>
