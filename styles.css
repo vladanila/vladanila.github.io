@@ -5,24 +5,19 @@ body {
     background-color: white;
     color: black;
     transition: background 0.3s, color 0.3s;
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center elements horizontally */
+    padding: 20px;
+    gap: 15px; /* Space between elements */
 }
 
 button {
     padding: 10px;
     margin: 10px;
     cursor: pointer;
-}
-
-#theme-toggle {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 8px 12px;
-    border: none;
-    background-color: gray;
-    color: white;
-    font-size: 16px;
     border-radius: 5px;
+    border: 1px solid #ccc;
 }
 
 /* Dark Mode */
@@ -34,4 +29,17 @@ body.dark-mode {
 body.dark-mode #theme-toggle {
     background-color: yellow;
     color: black;
+}
+
+/* For theme toggle button */
+#theme-toggle {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 8px 12px;
+    border: none;
+    background-color: gray;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
 }
