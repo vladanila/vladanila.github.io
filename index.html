@@ -3,30 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Resizer by vladanila</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <title>Imager</title>
     <link rel="stylesheet" href="styles.css">
-    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600&display=swap" rel="stylesheet">
 </head>
-<body>
-    <h1>Welcome to Image Resizer</h1>
-    
-    <input type="file" id="imageUpload">
-    <input type="number" id="width" placeholder="Enter width">
-    <span class="tooltip" id="width-tooltip">Please enter desired width in pixels</span>
-    <input type="number" id="height" placeholder="Enter height">
-    <span class="tooltip" id="height-tooltip">Please enter desired height in pixels</span>
+<body class="light-mode">
 
-    <button id="resizeBtn">Resize Image</button>
-    
-    <canvas id="canvas" style="display: none;"></canvas>
+    <!-- Light/Dark Mode Toggle Button with Emojis Only -->
+    <button id="mode-toggle" onclick="toggleMode()">🌙</button>
 
-    <button id="downloadBtn" style="display: none;">Download Resized Image</button>
-    
-    <button id="theme-toggle">🌙</button>
+    <!-- Welcome Heading -->
+    <h1 id="welcome-heading">Welcome to <span class="underline">Imager</span></h1>
 
+    <!-- Modern Text -->
+    <div id="modern-text">
+        Resize your images here.
+    </div>
+
+    <!-- Image Resizer Section -->
+    <div id="image-container">
+        <input type="file" id="upload" accept="image/*">
+    </div>
+
+    <!-- Resize Options -->
+    <div id="resize-options">
+        <input type="number" id="width" placeholder="Width (px)">
+        <input type="number" id="height" placeholder="Height (px)">
+        <button id="resize-button" onclick="resizeImage()">Resize</button>
+        <div id="tooltip">Please enter desired height/width in pixels</div>
+    </div>
+
+    <!-- Script -->
     <script src="script.js"></script>
 </body>
 </html>
