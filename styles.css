@@ -1,111 +1,96 @@
-/* Default Light Mode */
+/* General body styles */
 body {
-    font-family: 'Poppins', sans-serif;
-    text-align: center;
-    background-color: white;
-    color: black;
-    transition: background 0.3s, color 0.3s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    gap: 15px;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+    margin: 0;
+    padding: 0;
 }
 
-h1 {
-    font-size: 36px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 20px;
+/* Light mode */
+body.light-mode {
+    background: #fff;
+    color: #000;
 }
 
-button {
-    padding: 10px 20px;
-    margin: 10px;
-    cursor: pointer;
-    border-radius: 25px;
+button.light-mode {
     background-color: #4CAF50;
     color: white;
-    font-size: 16px;
     border: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-/* Hover Effect */
-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+button.light-mode:hover {
     background-color: #45a049;
 }
 
-button:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* Dark mode */
+body.dark-mode {
+    background-color: #000;  /* pure black background */
+    color: #fff;  /* white text for visibility */
 }
 
-/* Tooltip */
-.tooltip {
-    position: absolute;
+button.dark-mode {
     background-color: #555;
     color: white;
-    text-align: center;
-    border-radius: 5px;
-    padding: 5px 10px;
-    font-size: 14px;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s;
-    z-index: 10;
-}
-
-/* Show Tooltip on Focus */
-input:focus + .tooltip {
-    opacity: 1;
-    visibility: visible;
-}
-
-/* Floating Action Button */
-#downloadBtn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 20px;
-    border-radius: 50%;
-    background-color: #f44336;
-    color: white;
-    font-size: 20px;
     border: none;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button.dark-mode:hover {
+    background-color: #444;
+}
+
+/* Image Resizer Styles */
+#image-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+input[type="file"] {
     display: none;
 }
 
-#downloadBtn:hover {
-    background-color: #e53935;
-    transform: scale(1.1);
+#resize-options {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
 }
 
-/* Dark Mode */
-body.dark-mode {
-    background: linear-gradient(45deg, #3c1f44, #522a59); /* Black-Purple Gradient */
-    color: white;
+#width, #height {
+    padding: 10px;
+    font-size: 14px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
 }
 
-body.dark-mode #theme-toggle {
-    background-color: yellow;
-    color: black;
+/* Tooltip popup for height/width input */
+#tooltip {
+    display: none;
+    position: absolute;
+    background-color: #000;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 10;
 }
 
-/* Theme Toggle Button */
-#theme-toggle {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    padding: 8px 12px;
-    border: none;
-    background-color: gray;
-    color: white;
-    font-size: 16px;
-    border-radius: 5px;
+#resize-options:hover #tooltip {
+    display: block;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    #resize-options {
+        flex-direction: column;
+        align-items: center;
+    }
 }
