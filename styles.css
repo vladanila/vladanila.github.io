@@ -53,22 +53,12 @@ button.dark-mode:hover {
     margin-top: 20px;
 }
 
-input[type="file"] {
-    display: none;
-}
-
-#resize-options {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-#width, #height {
-    padding: 10px;
-    font-size: 14px;
-    border: 2px solid #ccc;
-    border-radius: 4px;
+/* Modern Text styling */
+#modern-text {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
 }
 
 /* Tooltip popup for height/width input */
@@ -85,6 +75,78 @@ input[type="file"] {
 
 #resize-options:hover #tooltip {
     display: block;
+}
+
+/* Layout fix for alignment */
+#resize-options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+    flex-direction: column; /* Stack inputs vertically */
+}
+
+input[type="file"] {
+    display: none;
+}
+
+#width, #height {
+    padding: 10px;
+    font-size: 14px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;  /* Added spacing */
+}
+
+/* Resize Button Styling */
+#resize-button {
+    padding: 12px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #008CBA; /* Beautiful blue button */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#resize-button:hover {
+    background-color: #007bb5;
+    transform: scale(1.1); /* Slight enlargement on hover */
+}
+
+#resize-button:active {
+    background-color: #005f8a; /* Darker on click */
+}
+
+/* Light/Dark Mode Button */
+#mode-toggle {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: #555;
+    color: white;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#mode-toggle:hover {
+    background-color: #444;
+}
+
+/* Welcome Heading Centered and Styled */
+#welcome-heading {
+    font-family: 'Manrope', sans-serif;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.underline {
+    text-decoration: underline;
+    font-weight: bold;
 }
 
 /* Media Queries */
