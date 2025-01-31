@@ -1,57 +1,38 @@
+/* General Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Manrope', sans-serif;
+    background: #fff;
+    color: #333;
+    margin: 0;
+    padding: 0;
     text-align: center;
+    transition: background-color 0.5s ease, color 0.5s ease;
     cursor: url('images-assets/cursor.png'), auto;
-    transition: background 0.3s ease, color 0.3s ease;
 }
 
-.light-mode {
-    background: white;
-    color: black;
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #000;
+    color: #fff;
 }
 
-.dark-mode {
-    background: black;
-    color: white;
-}
-
+/* Positioning the Light/Dark Mode Button */
 #mode-toggle {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
     background: none;
     border: none;
     cursor: pointer;
+    z-index: 100;
 }
 
-.mode-icon {
-    width: 30px;
-    height: 30px;
-    display: none;
+#mode-toggle img {
+    width: 40px;
+    height: 40px;
+    transition: transform 0.3s ease;
 }
 
-#upload {
-    display: none;
-}
-
-.custom-upload {
-    padding: 10px 15px;
-    background: purple;
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background: blue;
-    color: white;
-    cursor: pointer;
-    transition: 0.3s ease;
-}
-
-button:hover {
-    transform: scale(1.05);
+#mode-toggle img:hover {
+    transform: scale(1.1);
 }
