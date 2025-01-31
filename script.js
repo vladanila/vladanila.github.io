@@ -1,15 +1,16 @@
 function toggleMode() {
     const body = document.body;
     const modeButton = document.getElementById("mode-toggle");
+    const modeIcon = document.getElementById("mode-icon");
 
     if (body.classList.contains("light-mode")) {
         body.classList.remove("light-mode");
         body.classList.add("dark-mode");
-        modeButton.textContent = "🌞";
+        modeIcon.src = "images-assets/moon.png"; // Change to moon image
     } else {
         body.classList.remove("dark-mode");
         body.classList.add("light-mode");
-        modeButton.textContent = "🌙";
+        modeIcon.src = "images-assets/sun.png"; // Change to sun image
     }
 
     const readyMessage = document.getElementById("ready-message");
@@ -121,10 +122,9 @@ function resizeImage() {
                 if (!resizePrompt) {
                     resizePrompt = document.createElement("div");
                     resizePrompt.id = "resize-prompt";
-                    resizePrompt.innerHTML = `
-                        <span>Would you like to resize another image?</span>
-                        <button id="resize-another" class="upload-btn">Resize Another Photo</button>
-                    `;
+                    resizePrompt.innerHTML = 
+                        `<span>Would you like to resize another image?</span>
+                         <button id="resize-another" class="upload-btn">Resize Another Photo</button>`;
                     resizePrompt.style.position = "fixed";
                     resizePrompt.style.bottom = "20px";
                     resizePrompt.style.left = "50%";
