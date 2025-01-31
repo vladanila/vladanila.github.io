@@ -1,23 +1,89 @@
 /* Default Light Mode */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', sans-serif;
     text-align: center;
-    background-color: white;
-    color: black;
+    background: linear-gradient(45deg, #ff6f61, #d14e2a);
+    color: white;
     transition: background 0.3s, color 0.3s;
     display: flex;
-    flex-direction: column; /* Stack items vertically */
-    align-items: center; /* Center elements horizontally */
+    flex-direction: column;
+    align-items: center;
     padding: 20px;
-    gap: 15px; /* Space between elements */
+    gap: 15px;
+}
+
+h1 {
+    font-size: 36px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
 }
 
 button {
-    padding: 10px;
+    padding: 10px 20px;
     margin: 10px;
     cursor: pointer;
+    border-radius: 25px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+/* Hover Effect */
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+    background-color: #45a049;
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Tooltip */
+.tooltip {
+    position: absolute;
+    background-color: #555;
+    color: white;
+    text-align: center;
     border-radius: 5px;
-    border: 1px solid #ccc;
+    padding: 5px 10px;
+    font-size: 14px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+    z-index: 10;
+}
+
+/* Show Tooltip on Focus */
+input:focus + .tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Floating Action Button */
+#downloadBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 20px;
+    border-radius: 50%;
+    background-color: #f44336;
+    color: white;
+    font-size: 20px;
+    border: none;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    display: none;
+}
+
+#downloadBtn:hover {
+    background-color: #e53935;
+    transform: scale(1.1);
 }
 
 /* Dark Mode */
@@ -31,7 +97,7 @@ body.dark-mode #theme-toggle {
     color: black;
 }
 
-/* For theme toggle button */
+/* Theme Toggle Button */
 #theme-toggle {
     position: fixed;
     top: 10px;
