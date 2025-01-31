@@ -108,3 +108,10 @@ h1 {
 #resize-options button:active {
     transform: scale(1);
 }
+
+/* Initially hidden download button and message */
+#download-button,
+#ready-message {
+    opacity: 0;
+}
+
