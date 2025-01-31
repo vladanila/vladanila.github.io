@@ -11,6 +11,18 @@ function toggleMode() {
         body.classList.add("light-mode");
         modeButton.textContent = "🌙";
     }
+
+    const readyMessage = document.getElementById("ready-message");
+    const resizePrompt = document.getElementById("resize-prompt");
+
+    if (readyMessage) {
+        readyMessage.style.color = "red"; // Keep red for the ready message
+    }
+
+    if (resizePrompt) {
+        const promptText = resizePrompt.querySelector("span");
+        promptText.style.color = body.classList.contains("dark-mode") ? "black" : "#333"; // Set black for dark mode
+    }
 }
 
 document.getElementById("upload").addEventListener("change", function(event) {
@@ -82,7 +94,7 @@ function resizeImage() {
                 readyMessage = document.createElement("div");
                 readyMessage.id = "ready-message";
                 readyMessage.textContent = "Your photo is ready to be downloaded";
-                readyMessage.style.color = "red";
+                readyMessage.style.color = "red"; // Keep it red
                 readyMessage.style.fontSize = "16px";
                 readyMessage.style.marginTop = "10px";
                 readyMessage.style.opacity = "0";
@@ -142,7 +154,7 @@ function resizeImage() {
                         document.getElementById("resize-prompt").remove();
                     }, 1000);
                 };
-            }, 5000);
+            }, 2000);
         };
     };
 
