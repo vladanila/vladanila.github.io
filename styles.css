@@ -7,6 +7,7 @@ body {
     padding: 0;
     text-align: center;
     transition: background-color 0.5s ease, color 0.5s ease; /* Added smooth transition */
+    cursor: url('images-assets/cursor.png'), auto; /* Custom cursor */
 }
 
 /* Dark Mode Styles */
@@ -114,4 +115,3 @@ h1 {
 #ready-message {
     opacity: 0;
 }
-
