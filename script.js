@@ -36,7 +36,9 @@ const body = document.body;
 // Check for saved theme in local storage
 if (localStorage.getItem("theme") === "dark") {
     body.classList.add("dark-mode");
-    themeToggle.textContent = "☀️";
+    themeToggle.textContent = "☀️"; // Change the icon to the sun
+} else {
+    themeToggle.textContent = "🌙"; // Default icon
 }
 
 // Toggle theme on button click
@@ -45,9 +47,9 @@ themeToggle.addEventListener("click", function () {
 
     if (body.classList.contains("dark-mode")) {
         localStorage.setItem("theme", "dark");
-        themeToggle.textContent = "☀️";
+        themeToggle.textContent = "☀️"; // Sun for dark mode
     } else {
         localStorage.setItem("theme", "light");
-        themeToggle.textContent = "🌙";
+        themeToggle.textContent = "🌙"; // Moon for light mode
     }
 });
