@@ -3,30 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Imager - Resize Your Photos</title>
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <title>Imager by vladanila</title>
+
+    <link rel="icon" href="images-favicon/favicon-32x32.png" type="image/png">
+    <link rel="icon" href="images-favicon/favicon-16x16.png" type="image/png">
+    <link rel="apple-touch-icon" href="images-favicon/apple-touch-icon.png">
+    <link rel="icon" sizes="192x192" href="images-favicon/android-chrome-192x192.png">
+    <link rel="icon" sizes="512x512" href="images-favicon/android-chrome-512x512.png">
+    <link rel="icon" href="images-favicon/favicon.ico">
+
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600&display=swap" rel="stylesheet">
 </head>
-<body>
-    <button id="mode-toggle">
-        <img id="sun-icon" src="images-assets/sun.png" alt="Light Mode" class="mode-icon">
-        <img id="moon-icon" src="images-assets/moon.png" alt="Dark Mode" class="mode-icon">
+<body class="light-mode">
+
+    <button id="mode-toggle" onclick="toggleMode()">
+        <img id="mode-icon" src="images-assets/moon.png" alt="Toggle Mode">
     </button>
 
-    <h1>Resize Your Image</h1>
-    
-    <label for="upload" class="custom-upload">Choose an Image</label>
-    <input type="file" id="upload" accept="image/*">
-    <span id="file-name"></span>
+    <h1 id="welcome-heading">Welcome to <span class="underline">Imager</span></h1>
 
-    <input type="number" id="width" placeholder="Width">
-    <input type="number" id="height" placeholder="Height">
-    
-    <button onclick="resizeImage()">Resize</button>
-    
-    <p id="tooltip" style="display: none;"></p>
+    <div id="modern-text">
+        Resize your images here.
+    </div>
+
+    <div id="image-container">
+        <label for="upload" class="upload-btn">Upload Image</label>
+        <input type="file" id="upload" accept="image/*" style="display: none;">
+        <span id="file-name" style="margin-left: 10px; font-size: 1.2em; color: #4CAF50;"></span>
+    </div>
+
+    <div id="resize-options">
+        <input type="number" id="width" placeholder="Width (px)">
+        <input type="number" id="height" placeholder="Height (px)">
+        <button id="resize-button" onclick="resizeImage()">Resize</button>
+        <div id="tooltip">Please enter desired height/width in pixels</div>
+    </div>
 
     <script src="script.js"></script>
 </body>
