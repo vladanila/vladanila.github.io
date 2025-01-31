@@ -8,7 +8,6 @@
     <meta http-equiv="expires" content="0">
     <title>Imager by vladanila</title>
 
-    <!-- Favicon Links -->
     <link rel="icon" href="images-favicon/favicon-32x32.png" type="image/png">
     <link rel="icon" href="images-favicon/favicon-16x16.png" type="image/png">
     <link rel="apple-touch-icon" href="images-favicon/apple-touch-icon.png">
@@ -21,25 +20,20 @@
 </head>
 <body class="light-mode">
 
-    <!-- Light/Dark Mode Toggle Button with Emojis Only -->
     <button id="mode-toggle" onclick="toggleMode()">🌙</button>
 
-    <!-- Welcome Heading -->
     <h1 id="welcome-heading">Welcome to <span class="underline">Imager</span></h1>
 
-    <!-- Modern Text -->
     <div id="modern-text">
         Resize your images here.
     </div>
 
-    <!-- Image Upload Section -->
     <div id="image-container">
-        <!-- Upload Button -->
         <label for="upload" class="upload-btn">Upload Image</label>
         <input type="file" id="upload" accept="image/*" style="display: none;">
+        <span id="file-name" style="margin-left: 10px; font-size: 1.2em; color: #4CAF50;"></span>
     </div>
 
-    <!-- Resize Options -->
     <div id="resize-options">
         <input type="number" id="width" placeholder="Width (px)">
         <input type="number" id="height" placeholder="Height (px)">
@@ -47,7 +41,6 @@
         <div id="tooltip">Please enter desired height/width in pixels</div>
     </div>
 
-    <!-- Script -->
     <script src="script.js"></script>
 </body>
 </html>
