@@ -1,4 +1,3 @@
-// Function to toggle between light and dark mode
 function toggleMode() {
     const body = document.body;
     const modeButton = document.getElementById("mode-toggle");
@@ -6,15 +5,14 @@ function toggleMode() {
     if (body.classList.contains("light-mode")) {
         body.classList.remove("light-mode");
         body.classList.add("dark-mode");
-        modeButton.textContent = "🌞"; // Change button text to Sun emoji for Light mode
+        modeButton.textContent = "🌞";
     } else {
         body.classList.remove("dark-mode");
         body.classList.add("light-mode");
-        modeButton.textContent = "🌙"; // Change button text to Moon emoji for Dark mode
+        modeButton.textContent = "🌙";
     }
 }
 
-// Image upload functionality with popup confirmation
 document.getElementById("upload").addEventListener("change", function(event) {
     const file = event.target.files[0];
     if (file) {
@@ -23,7 +21,6 @@ document.getElementById("upload").addEventListener("change", function(event) {
     }
 });
 
-// Function to resize image and show download button
 function resizeImage() {
     const width = document.getElementById("width").value;
     const height = document.getElementById("height").value;
@@ -55,7 +52,6 @@ function resizeImage() {
 
             const resizedImageUrl = canvas.toDataURL("image/png");
 
-            // Create or update the download button
             let downloadButton = document.getElementById("download-button");
             if (!downloadButton) {
                 downloadButton = document.createElement("button");
@@ -69,9 +65,8 @@ function resizeImage() {
                 downloadButton.style.fontSize = "16px";
                 downloadButton.style.cursor = "pointer";
                 downloadButton.style.marginTop = "10px";
-                downloadButton.style.transition = "0.3s ease";
+                downloadButton.style.transition = "opacity 1s ease-in-out, transform 0.3s ease";
 
-                // Add hover effect
                 downloadButton.onmouseover = function() {
                     downloadButton.style.transform = "scale(1.05)";
                 };
@@ -82,6 +77,24 @@ function resizeImage() {
                 document.getElementById("resize-options").appendChild(downloadButton);
             }
 
+            let readyMessage = document.getElementById("ready-message");
+            if (!readyMessage) {
+                readyMessage = document.createElement("div");
+                readyMessage.id = "ready-message";
+                readyMessage.textContent = "Your photo is ready to be downloaded";
+                readyMessage.style.color = "red";
+                readyMessage.style.fontSize = "16px";
+                readyMessage.style.marginTop = "10px";
+                readyMessage.style.opacity = "0";
+                readyMessage.style.transition = "opacity 1s ease-in-out";
+                document.getElementById("resize-options").appendChild(readyMessage);
+            }
+
+            setTimeout(() => {
+                readyMessage.style.opacity = "1";
+                downloadButton.style.opacity = "1";
+            }, 500);
+
             downloadButton.onclick = function() {
                 const link = document.createElement("a");
                 link.href = resizedImageUrl;
@@ -90,6 +103,46 @@ function resizeImage() {
                 link.click();
                 document.body.removeChild(link);
             };
+
+            setTimeout(() => {
+                let resizePrompt = document.getElementById("resize-prompt");
+                if (!resizePrompt) {
+                    resizePrompt = document.createElement("div");
+                    resizePrompt.id = "resize-prompt";
+                    resizePrompt.innerHTML = `
+                        <span>Would you like to resize another image?</span>
+                        <button id="resize-another" class="upload-btn">Resize Another Photo</button>
+                    `;
+                    resizePrompt.style.position = "fixed";
+                    resizePrompt.style.bottom = "20px";
+                    resizePrompt.style.left = "50%";
+                    resizePrompt.style.transform = "translateX(-50%)";
+                    resizePrompt.style.backgroundColor = "#fff";
+                    resizePrompt.style.padding = "15px";
+                    resizePrompt.style.borderRadius = "10px";
+                    resizePrompt.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)";
+                    resizePrompt.style.textAlign = "center";
+                    resizePrompt.style.opacity = "0";
+                    resizePrompt.style.transition = "opacity 1s ease-in-out";
+
+                    document.body.appendChild(resizePrompt);
+
+                    setTimeout(() => {
+                        resizePrompt.style.opacity = "1";
+                    }, 100);
+                }
+
+                document.getElementById("resize-another").onclick = function() {
+                    document.getElementById("upload").value = "";
+                    document.getElementById("file-name").textContent = "";
+                    document.getElementById("width").value = "";
+                    document.getElementById("height").value = "";
+                    document.getElementById("resize-prompt").style.opacity = "0";
+                    setTimeout(() => {
+                        document.getElementById("resize-prompt").remove();
+                    }, 1000);
+                };
+            }, 5000);
         };
     };
 
