@@ -4,19 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Resizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <button id="theme-toggle">🌙</button>
-    
     <h1>Welcome to Image Resizer</h1>
     
     <input type="file" id="imageUpload">
     <input type="number" id="width" placeholder="Enter width">
+    <span class="tooltip" id="width-tooltip">Please enter desired width in pixels</span>
     <input type="number" id="height" placeholder="Enter height">
-    <button id="resizeBtn">Resize</button>
-    <canvas id="canvas"></canvas>
+    <span class="tooltip" id="height-tooltip">Please enter desired height in pixels</span>
+
+    <button id="resizeBtn">Resize Image</button>
+    
+    <canvas id="canvas" style="display: none;"></canvas>
+
     <button id="downloadBtn" style="display: none;">Download Resized Image</button>
+    
+    <button id="theme-toggle">🌙</button>
 
     <script src="script.js"></script>
 </body>
