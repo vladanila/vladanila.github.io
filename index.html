@@ -41,10 +41,17 @@
         <div id="tooltip">Please enter desired height/width in pixels</div>
     </div>
 
+    <!-- Image Preview Container -->
+    <div id="image-preview-container" style="opacity: 0; text-align: center; margin-top: 20px; transition: opacity 1s ease-in-out;">
+        <img id="preview-image" src="#" alt="Resized Image Preview" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+    </div>
+
     <div id="ready-message" style="opacity: 0; font-size: 16px; color: red; margin-top: 10px; transition: opacity 1s ease-in-out;">Your photo is ready to be downloaded</div>
     <button id="download-button" style="opacity: 0; background-color: red; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-top: 10px; transition: opacity 1s ease-in-out, transform 0.3s ease;">Download</button>
 
+    <!-- Resize Prompt Box -->
     <div id="resize-prompt" style="opacity: 0; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #fff; padding: 15px; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); text-align: center; transition: opacity 1s ease-in-out;">
+        <span id="close-prompt" style="position: absolute; top: 5px; right: 10px; cursor: pointer; font-size: 20px; color: #888; transition: color 0.3s ease;">×</span>
         <span>Would you like to resize another image?</span>
         <button id="resize-another" class="upload-btn">Resize Another Photo</button>
     </div>
