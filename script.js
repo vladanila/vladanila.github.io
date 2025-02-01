@@ -1,3 +1,4 @@
+// Toggle between light and dark mode
 function toggleMode() {
     const body = document.body;
     const modeIcon = document.getElementById("mode-icon");
@@ -5,15 +6,16 @@ function toggleMode() {
     if (body.classList.contains("light-mode")) {
         body.classList.remove("light-mode");
         body.classList.add("dark-mode");
-        modeIcon.src = "images-assets/sun.png"; 
+        modeIcon.src = "images-assets/sun.png";
     } else {
         body.classList.remove("dark-mode");
         body.classList.add("light-mode");
-        modeIcon.src = "images-assets/moon.png"; 
+        modeIcon.src = "images-assets/moon.png";
     }
 }
 
-document.getElementById("upload").addEventListener("change", function(event) {
+// Handle image upload
+document.getElementById("upload").addEventListener("change", function (event) {
     const file = event.target.files[0];
     if (file) {
         alert("Image successfully uploaded!");
@@ -21,90 +23,46 @@ document.getElementById("upload").addEventListener("change", function(event) {
     }
 });
 
+// Resize image and show download button, message, and resize prompt
 function resizeImage() {
     const width = document.getElementById("width").value;
     const height = document.getElementById("height").value;
-    const fileInput = document.getElementById("upload").files[0];
-
-    if (!fileInput) {
-        alert("Please upload an image first.");
-        return;
-    }
 
     if (!width || !height) {
-        alert("Please enter valid width and height values.");
+        alert("Please enter both width and height.");
         return;
     }
 
-    const img = new Image();
-    const reader = new FileReader();
+    // Simulate resizing logic (replace this with actual resizing logic)
+    console.log(`Resizing image to ${width}x${height}...`);
 
-    reader.onload = function(event) {
-        img.src = event.target.result;
-        img.onload = function() {
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d");
+    // Show the "ready" message and download button with fade-in animation
+    const readyMessage = document.getElementById("ready-message");
+    const downloadButton = document.getElementById("download-button");
 
-            canvas.width = width;
-            canvas.height = height;
+    readyMessage.style.opacity = "1";
+    downloadButton.style.opacity = "1";
 
-            ctx.drawImage(img, 0, 0, width, height);
-
-            const resizedImageUrl = canvas.toDataURL("image/png");
-
-            let downloadButton = document.getElementById("download-button");
-            if (!downloadButton) {
-                downloadButton = document.createElement("button");
-                downloadButton.id = "download-button";
-                downloadButton.textContent = "Download";
-                downloadButton.style.backgroundColor = "red";
-                downloadButton.style.color = "white";
-                downloadButton.style.padding = "10px 20px";
-                downloadButton.style.border = "none";
-                downloadButton.style.borderRadius = "5px";
-                downloadButton.style.fontSize = "16px";
-                downloadButton.style.cursor = "pointer";
-                downloadButton.style.marginTop = "10px";
-                downloadButton.style.transition = "opacity 1s ease-in-out, transform 0.3s ease";
-
-                downloadButton.onmouseover = function() {
-                    downloadButton.style.transform = "scale(1.05)";
-                };
-                downloadButton.onmouseout = function() {
-                    downloadButton.style.transform = "scale(1)";
-                };
-
-                document.getElementById("resize-options").appendChild(downloadButton);
-            }
-
-            let readyMessage = document.getElementById("ready-message");
-            if (!readyMessage) {
-                readyMessage = document.createElement("div");
-                readyMessage.id = "ready-message";
-                readyMessage.textContent = "Your photo is ready to be downloaded";
-                readyMessage.style.color = "red"; 
-                readyMessage.style.fontSize = "16px";
-                readyMessage.style.marginTop = "10px";
-                readyMessage.style.opacity = "0";
-                readyMessage.style.transition = "opacity 1s ease-in-out";
-                document.getElementById("resize-options").appendChild(readyMessage);
-            }
-
-            setTimeout(() => {
-                readyMessage.style.opacity = "1";
-                downloadButton.style.opacity = "1";
-            }, 500);
-
-            downloadButton.onclick = function() {
-                const link = document.createElement("a");
-                link.href = resizedImageUrl;
-                link.download = "resized-image.png";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            };
-        };
-    };
-
-    reader.readAsDataURL(fileInput);
+    // Show the resize prompt after 2 seconds
+    setTimeout(() => {
+        const resizePrompt = document.getElementById("resize-prompt");
+        resizePrompt.style.opacity = "1";
+    }, 2000); // 2 seconds delay
 }
+
+// Handle download button click (replace this with actual download logic)
+document.getElementById("download-button").addEventListener("click", function () {
+    alert("Downloading image...");
+});
+
+// Handle "Resize Another Image" button click
+document.getElementById("resize-another").addEventListener("click", function () {
+    // Reset the form and hide the prompt
+    document.getElementById("upload").value = ""; // Clear file input
+    document.getElementById("file-name").textContent = ""; // Clear file name
+    document.getElementById("width").value = ""; // Clear width input
+    document.getElementById("height").value = ""; // Clear height input
+    document.getElementById("ready-message").style.opacity = "0"; // Hide ready message
+    document.getElementById("download-button").style.opacity = "0"; // Hide download button
+    document.getElementById("resize-prompt").style.opacity = "0"; // Hide resize prompt
+});
