@@ -15,45 +15,43 @@ body.dark-mode {
     color: #fff;
 }
 
-/* Positioning the Light/Dark Mode Button at the Top Right */
-#mode-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    z-index: 100;
-}
-
-/* Dark Mode Toggle Icon Animation */
-#mode-toggle img {
-    width: 32px;
-    height: 32px;
-    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
-}
-
-/* Rotate and fade the icon when switching modes */
-body.light-mode #mode-toggle img {
-    transform: rotate(0deg);
-    opacity: 1;
-}
-
-body.dark-mode #mode-toggle img {
-    transform: rotate(360deg);
-    opacity: 1;
-}
-
-/* Heading */
-h1 {
+/* Fixed Heading */
+#welcome-heading {
     font-size: 3em;
     font-weight: 600;
     margin-top: 30px;
+    position: sticky;
+    top: 0;
+    background: inherit; /* Match the background color */
+    z-index: 100;
+    padding: 20px 0;
 }
 
 /* Underline for Imager */
 .underline {
     text-decoration: underline;
+}
+
+/* Feature Boxes Container */
+#feature-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Feature Box */
+.feature-box {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+body.dark-mode .feature-box {
+    background-color: #1e1e1e;
+    box-shadow: 0px 4px 6px rgba(255, 255, 255, 0.1);
 }
 
 /* Modern Text */
@@ -202,4 +200,33 @@ h1 {
 
 #close-prompt:hover {
     color: #000; /* Darker color on hover */
+}
+
+/* Dark Mode Toggle Button */
+#mode-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 100;
+}
+
+/* Dark Mode Toggle Icon Animation */
+#mode-toggle img {
+    width: 32px;
+    height: 32px;
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+/* Rotate and fade the icon when switching modes */
+body.light-mode #mode-toggle img {
+    transform: rotate(0deg);
+    opacity: 1;
+}
+
+body.dark-mode #mode-toggle img {
+    transform: rotate(360deg);
+    opacity: 1;
 }
