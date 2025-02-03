@@ -77,6 +77,14 @@ function resizeImage() {
             readyMessage.style.opacity = "1";
             downloadButton.style.opacity = "1";
 
+            // Handle download button click
+            downloadButton.onclick = function () {
+                const link = document.createElement("a");
+                link.href = canvas.toDataURL(); // Use the canvas data URL
+                link.download = "resized-image.png"; // Default filename
+                link.click();
+            };
+
             // Show the resize prompt after 2 seconds
             setTimeout(() => {
                 const resizePrompt = document.getElementById("resize-prompt");
@@ -88,15 +96,6 @@ function resizeImage() {
     // Read the uploaded file as a data URL
     reader.readAsDataURL(file);
 }
-
-// Handle download button click
-document.getElementById("download-button").addEventListener("click", function () {
-    const previewImage = document.getElementById("preview-image");
-    const link = document.createElement("a");
-    link.href = previewImage.src;
-    link.download = "resized-image.png"; // Default filename
-    link.click();
-});
 
 // Handle "Resize Another Image" button click
 document.getElementById("resize-another").addEventListener("click", function () {
