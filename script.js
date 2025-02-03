@@ -1,3 +1,25 @@
+// Toggle the sidebar menu
+function toggleMenu() {
+    const sidebar = document.getElementById("sidebar-menu");
+    if (sidebar.style.left === "0px") {
+        sidebar.style.left = "-250px"; // Hide sidebar
+    } else {
+        sidebar.style.left = "0px"; // Show sidebar
+    }
+}
+
+// Reset the form
+function resetForm() {
+    document.getElementById("upload").value = ""; // Clear file input
+    document.getElementById("file-name").textContent = ""; // Clear file name
+    document.getElementById("width").value = ""; // Clear width input
+    document.getElementById("height").value = ""; // Clear height input
+    document.getElementById("ready-message").style.opacity = "0"; // Hide ready message
+    document.getElementById("download-button").style.opacity = "0"; // Hide download button
+    document.getElementById("resize-prompt").style.opacity = "0"; // Hide resize prompt
+    document.getElementById("image-preview-container").style.opacity = "0"; // Hide preview
+}
+
 // Toggle between light and dark mode
 function toggleMode() {
     const body = document.body;
@@ -99,15 +121,7 @@ function resizeImage() {
 
 // Handle "Resize Another Image" button click
 document.getElementById("resize-another").addEventListener("click", function () {
-    // Reset the form and hide the prompt
-    document.getElementById("upload").value = ""; // Clear file input
-    document.getElementById("file-name").textContent = ""; // Clear file name
-    document.getElementById("width").value = ""; // Clear width input
-    document.getElementById("height").value = ""; // Clear height input
-    document.getElementById("ready-message").style.opacity = "0"; // Hide ready message
-    document.getElementById("download-button").style.opacity = "0"; // Hide download button
-    document.getElementById("resize-prompt").style.opacity = "0"; // Hide resize prompt
-    document.getElementById("image-preview-container").style.opacity = "0"; // Hide preview
+    resetForm(); // Reset the form
 });
 
 // Handle close prompt button click
