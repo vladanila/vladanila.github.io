@@ -1,3 +1,6 @@
+// Global variable to hold the current canvas data for download use.
+let currentCanvas = null;
+
 /* Toggle sidebar menu with GSAP animation */
 function toggleMenu() {
   const sidebar = document.getElementById("sidebar-menu");
@@ -11,16 +14,15 @@ function toggleMenu() {
   }
 }
 
-/* Reset the form */
+/* Reset the form (except the download button, which remains visible) */
 function resetForm() {
   document.getElementById("upload").value = "";
   document.getElementById("file-name").textContent = "";
   document.getElementById("width").value = "";
   document.getElementById("height").value = "";
   document.getElementById("ready-message").style.opacity = "0";
-  document.getElementById("download-button").style.opacity = "0";
-  document.getElementById("resize-prompt").style.opacity = "0";
   document.getElementById("image-preview-container").style.opacity = "0";
+  currentCanvas = null;
 }
 
 /* Toggle between light and dark mode with GSAP animation */
@@ -36,7 +38,11 @@ function toggleMode() {
     body.classList.add("light-mode");
     modeIcon.src = "images-assets/moon.png";
   }
-  gsap.fromTo(modeIcon, { rotation: 0 }, { duration: 1, rotation: 360, ease: "elastic.out(1, 0.3)" });
+  gsap.fromTo(
+    modeIcon,
+    { rotation: 0 },
+    { duration: 1, rotation: 360, ease: "elastic.out(1, 0.3)" }
+  );
 }
 
 /* Handle image upload */
@@ -78,39 +84,42 @@ function resizeImage() {
       canvas.height = height;
       ctx.drawImage(img, 0, 0, width, height);
 
+      // Save the current canvas globally for download use.
+      currentCanvas = canvas;
+
+      // Set the preview image source to the resized image.
       const previewImage = document.getElementById("preview-image");
       previewImage.src = canvas.toDataURL();
 
-      // Animate image preview, ready message, and download button
+      // Animate image preview and ready message.
       gsap.to("#image-preview-container", { duration: 0.8, opacity: 1, ease: "power2.out" });
       gsap.to("#ready-message", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.5 });
+      // Animate the download button to make it visible.
       gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.5 });
-
-      // Set download functionality
-      document.getElementById("download-button").onclick = function () {
-        const link = document.createElement("a");
-        link.href = canvas.toDataURL("image/png");
-        link.download = "resized-image.png";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      };
-
-      // Show the resize prompt after 2 seconds
-      setTimeout(() => {
-        gsap.to("#resize-prompt", { duration: 0.8, opacity: 1, ease: "power2.out" });
-      }, 2000);
     };
   };
   reader.readAsDataURL(file);
 }
 
-/* Handle "Resize Another Image" button click */
-document.getElementById("resize-another").addEventListener("click", function () {
-  resetForm();
-});
+/* New Download Button Function */
+function downloadImage() {
+  if (!currentCanvas) {
+    alert("Please resize an image first.");
+    return;
+  }
+  
+  // Create a temporary link to trigger download.
+  const link = document.createElement("a");
+  link.href = currentCanvas.toDataURL("image/png");
+  link.download = "resized-image.png";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 
-/* Handle close prompt click */
-document.getElementById("close-prompt").addEventListener("click", function () {
-  gsap.to("#resize-prompt", { duration: 0.8, opacity: 0, ease: "power2.out" });
-});
+  // Animate the download button for feedback.
+  gsap.fromTo(
+    "#download-button",
+    { scale: 1 },
+    { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" }
+  );
+}
