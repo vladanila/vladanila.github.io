@@ -70,18 +70,12 @@
       <div id="ready-message" class="ready-message">
         Your photo is ready to be downloaded
       </div>
-      <button id="download-button" class="download-btn">Download</button>
-
-      <!-- Resize Prompt Box -->
-      <div id="resize-prompt" class="resize-prompt">
-        <span id="close-prompt" class="close-prompt">×</span>
-        <span>Would you like to resize another image?</span>
-        <button id="resize-another" class="upload-btn">Resize Another Photo</button>
-      </div>
+      <!-- New Download Button -->
+      <button id="download-button" class="download-btn" onclick="downloadImage()">Download</button>
     </div>
   </div>
 
-  <!-- Dark Mode Toggle Button -->
+  <!-- Dark Mode Toggle Button (Fixed to Upper Right) -->
   <button id="mode-toggle" onclick="toggleMode()">
     <img id="mode-icon" src="images-assets/moon.png" alt="Toggle Mode" />
   </button>
