@@ -1,18 +1,22 @@
-/* General Styles */
-body {
-  font-family: 'Manrope', sans-serif;
-  background: #fff;
-  color: #333;
+/* Reset and Base Styles */
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  text-align: center;
-  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-/* Dark Mode Styles */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #f0f2f5, #ffffff);
+  color: #333;
+  text-align: center;
+  transition: background 0.5s ease, color 0.5s ease;
+}
+
+/* Dark Mode */
 body.dark-mode {
-  background-color: #000;
-  color: #fff;
+  background: #1e1e2f;
+  color: #f0f0f0;
 }
 
 /* Hamburger Menu Icon */
@@ -23,7 +27,7 @@ body.dark-mode {
   width: 35px;
   height: 30px;
   cursor: pointer;
-  z-index: 1000;
+  z-index: 1100;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -31,7 +35,7 @@ body.dark-mode {
 }
 
 #menu-icon:hover {
-  transform: rotate(10deg);
+  transform: scale(1.1);
 }
 
 #menu-icon .bar {
@@ -43,7 +47,7 @@ body.dark-mode {
 }
 
 body.dark-mode #menu-icon .bar {
-  background-color: #fff;
+  background-color: #f0f0f0;
 }
 
 /* Transform bars into an "X" when menu is open */
@@ -61,248 +65,260 @@ body.dark-mode #menu-icon .bar {
 .sidebar {
   position: fixed;
   top: 0;
-  left: -300px; /* Hidden by default */
-  width: 300px;
+  left: -280px;
+  width: 280px;
   height: 100%;
-  background: linear-gradient(135deg, #f9f9f9, #e0e0e0);
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(145deg, #ffffff, #e6e6e6);
+  box-shadow: 4px 0 15px rgba(0,0,0,0.1);
   transition: left 0.4s ease;
-  z-index: 999;
-  padding-top: 60px;
+  z-index: 1050;
+  padding-top: 70px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 body.dark-mode .sidebar {
-  background: linear-gradient(135deg, #1e1e1e, #333);
+  background: linear-gradient(145deg, #2a2a3c, #1e1e2f);
 }
 
 .sidebar button {
   width: 80%;
   padding: 12px;
-  margin: 8px 0;
-  text-align: center;
-  background-color: #4CAF50;
-  color: white;
+  margin: 10px 0;
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  color: #fff;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 25px;
+  font-size: 15px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .sidebar button:hover {
-  background-color: #45a049;
-  transform: scale(1.03);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
-.sidebar button:active {
-  transform: scale(1);
-}
-
-/* Project Credit in Sidebar */
 #project-credit {
   margin-top: auto;
   margin-bottom: 20px;
-  font-size: 14px;
+  font-size: 12px;
   color: #666;
 }
 
 body.dark-mode #project-credit {
-  color: #ccc;
+  color: #aaa;
 }
 
 /* Fixed Heading */
 #welcome-heading {
-  font-size: 3em;
+  font-size: 2.8em;
   font-weight: 600;
-  margin-top: 30px;
+  margin-top: 40px;
+  padding: 20px 0;
   position: sticky;
   top: 0;
-  background: inherit;
+  background: transparent;
   z-index: 100;
-  padding: 20px 0;
 }
 
-/* Underline for Imager */
+/* Underline */
 .underline {
   text-decoration: underline;
+  color: #2575fc;
 }
 
-/* Feature Boxes Container */
+/* Feature Container */
 #feature-container {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 900px;
+  margin: 40px auto;
   padding: 20px;
 }
 
 /* Feature Box */
 .feature-box {
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.5s ease, box-shadow 0.5s ease;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 40px;
+  box-shadow: 0px 8px 20px rgba(0,0,0,0.05);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.feature-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 12px 25px rgba(0,0,0,0.1);
 }
 
 body.dark-mode .feature-box {
-  background-color: #1e1e1e;
-  box-shadow: 0px 4px 6px rgba(255, 255, 255, 0.1);
+  background: #2a2a3c;
+  box-shadow: 0px 8px 20px rgba(0,0,0,0.3);
 }
 
 /* Modern Text */
 #modern-text {
-  font-size: 1.5em;
-  margin-top: 10px;
+  font-size: 1.6em;
+  margin-bottom: 20px;
 }
 
-/* Image Upload Button */
+/* Image Container */
+#image-container {
+  margin-bottom: 20px;
+}
+
+.file-name {
+  margin-left: 10px;
+  font-size: 1.1em;
+  color: #2575fc;
+}
+
+/* Upload Button */
 .upload-btn {
-  background-color: #4CAF50;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
+  background: linear-gradient(90deg, #ff512f, #dd2476);
+  color: #fff;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 25px;
   font-size: 16px;
   cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  border: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .upload-btn:hover {
-  background-color: #45a049;
-  transform: scale(1.05);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
 
-.upload-btn:active {
-  transform: scale(1);
-}
-
-/* Tooltip Styles */
-#tooltip {
-  display: none;
-  font-size: 14px;
-  margin-top: 5px;
-  color: #f44336;
-}
-
-/* Resize Options and Button */
+/* Resize Options */
 #resize-options {
-  margin-top: 20px;
+  margin: 20px 0;
 }
 
 #resize-options input {
-  padding: 10px;
+  padding: 12px;
   margin: 10px;
   border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 200px;
+  border-radius: 25px;
+  width: 150px;
+  font-size: 16px;
 }
 
 #resize-options button {
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
+  padding: 12px 25px;
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 25px;
   font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 #resize-options button:hover {
-  background-color: #45a049;
-  transform: scale(1.05);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
 
-#resize-options button:active {
-  transform: scale(1);
-}
-
-/* Download Button Styles */
-#download-button {
-  opacity: 0;
-  background-color: red;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: opacity 1s ease-in-out, transform 0.3s ease;
-}
-
-#download-button:hover {
-  background-color: #cc0000;
-  transform: scale(1.05);
-}
-
-#download-button:active {
-  transform: scale(1);
-}
-
-/* Ready Message Styles */
-#ready-message {
-  opacity: 0;
-  font-size: 16px;
-  color: red;
-  margin-top: 10px;
-  transition: opacity 1s ease-in-out;
+/* Tooltip */
+.tooltip {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #ff6b6b;
+  display: none;
 }
 
 /* Image Preview Container */
-#image-preview-container {
-  opacity: 0;
-  text-align: center;
+.image-preview-container {
   margin-top: 20px;
-  transition: opacity 1s ease-in-out;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
 }
 
-/* Preview Image */
 #preview-image {
   max-width: 100%;
-  height: auto;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  box-shadow: 0px 8px 20px rgba(0,0,0,0.1);
 }
 
-/* Resize Prompt Box */
-#resize-prompt {
+/* Ready Message */
+.ready-message {
+  margin-top: 15px;
+  font-size: 16px;
+  color: #27ae60;
   opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+
+/* Download Button */
+.download-btn {
+  background: linear-gradient(90deg, #11998e, #38ef7d);
+  color: #fff;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 15px;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out, transform 0.3s ease;
+}
+
+.download-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* Resize Prompt */
+.resize-prompt {
   position: fixed;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #fff;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  transition: opacity 1s ease-in-out;
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 30px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
 }
 
-#resize-prompt span {
-  color: #000;
+.resize-prompt span {
+  font-size: 16px;
+  color: #333;
 }
 
-/* Close Button for Resize Prompt */
-#close-prompt {
+.close-prompt {
   position: absolute;
-  top: 5px;
-  right: 10px;
+  top: 10px;
+  right: 15px;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 22px;
   color: #888;
   transition: color 0.3s ease;
 }
 
-#close-prompt:hover {
-  color: #000;
+.close-prompt:hover {
+  color: #333;
+}
+
+/* Dark Mode Overrides */
+body.dark-mode input {
+  background: #3a3a50;
+  color: #f0f0f0;
+  border: 1px solid #555;
+}
+
+body.dark-mode .tooltip {
+  color: #ff6b6b;
+}
+
+body.dark-mode .resize-prompt {
+  background: #2a2a3c;
+}
+
+body.dark-mode .resize-prompt span {
+  color: #f0f0f0;
 }
 
 /* Dark Mode Toggle Button */
@@ -313,21 +329,12 @@ body.dark-mode .feature-box {
   background: none;
   border: none;
   cursor: pointer;
-  z-index: 100;
+  z-index: 1100;
 }
 
 #mode-toggle img {
   width: 32px;
   height: 32px;
-  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+  transition: transform 0.5s ease;
 }
 
-body.light-mode #mode-toggle img {
-  transform: rotate(0deg);
-  opacity: 1;
-}
-
-body.dark-mode #mode-toggle img {
-  transform: rotate(360deg);
-  opacity: 1;
-}
