@@ -1,88 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="pragma" content="no-cache">
-    <meta http-equiv="expires" content="0">
-    <title>Imager by vladanila</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="pragma" content="no-cache" />
+  <meta http-equiv="expires" content="0" />
+  <title>Imager by vladanila</title>
 
-    <link rel="icon" href="images-favicon/favicon-32x32.png" type="image/png">
-    <link rel="icon" href="images-favicon/favicon-16x16.png" type="image/png">
-    <link rel="apple-touch-icon" href="images-favicon/apple-touch-icon.png">
-    <link rel="icon" sizes="192x192" href="images-favicon/android-chrome-192x192.png">
-    <link rel="icon" sizes="512x512" href="images-favicon/android-chrome-512x512.png">
-    <link rel="icon" href="images-favicon/favicon.ico">
+  <link rel="icon" href="images-favicon/favicon-32x32.png" type="image/png" />
+  <link rel="icon" href="images-favicon/favicon-16x16.png" type="image/png" />
+  <link rel="apple-touch-icon" href="images-favicon/apple-touch-icon.png" />
+  <link rel="icon" sizes="192x192" href="images-favicon/android-chrome-192x192.png" />
+  <link rel="icon" sizes="512x512" href="images-favicon/android-chrome-512x512.png" />
+  <link rel="icon" href="images-favicon/favicon.ico" />
 
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600&display=swap" rel="stylesheet" />
 </head>
 <body class="light-mode">
+  <!-- Hamburger Menu Icon -->
+  <div id="menu-icon" onclick="toggleMenu()">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </div>
 
-    <!-- Hamburger Menu Icon -->
-    <div id="menu-icon" onclick="toggleMenu()">☰</div>
+  <!-- Sidebar Menu -->
+  <div id="sidebar-menu" class="sidebar">
+    <button onclick="alert('Crop Image feature coming soon!')">Crop Image</button>
+    <button onclick="alert('Filter Effects feature coming soon!')">Filter Effects</button>
+    <button onclick="alert('Rotate Image feature coming soon!')">Rotate Image</button>
+    <button onclick="alert('Watermark feature coming soon!')">Watermark</button>
+    <button onclick="alert('Batch Process feature coming soon!')">Batch Process</button>
+    <button onclick="alert('Save History feature coming soon!')">Save History</button>
+    <div id="project-credit">A project by Geetartha</div>
+  </div>
 
-    <!-- Sidebar Menu -->
-    <div id="sidebar-menu" class="sidebar">
-        <button onclick="toggleMode()">Toggle Dark Mode</button>
-        <button onclick="resetForm()">Reset Form</button>
-        <button onclick="alert('Feature coming soon!')">New Feature</button>
+  <!-- Fixed Heading -->
+  <h1 id="welcome-heading">Welcome to <span class="underline">Imager</span></h1>
+
+  <!-- Feature Boxes Container -->
+  <div id="feature-container">
+    <!-- Resize Feature Box -->
+    <div class="feature-box">
+      <div id="modern-text">Resize your images here.</div>
+
+      <div id="image-container">
+        <label for="upload" class="upload-btn">Upload Image</label>
+        <input type="file" id="upload" accept="image/*" style="display: none;" />
+        <span id="file-name" style="margin-left: 10px; font-size: 1.2em; color: #4CAF50;"></span>
+      </div>
+
+      <div id="resize-options">
+        <input type="number" id="width" placeholder="Width (px)" />
+        <input type="number" id="height" placeholder="Height (px)" />
+        <button id="resize-button" onclick="resizeImage()">Resize</button>
+        <div id="tooltip">Please enter desired height/width in pixels</div>
+      </div>
+
+      <!-- Image Preview Container -->
+      <div
+        id="image-preview-container"
+        style="opacity: 0; text-align: center; margin-top: 20px; transition: opacity 1s ease-in-out;"
+      >
+        <img
+          id="preview-image"
+          src="#"
+          alt="Resized Image Preview"
+          style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"
+        />
+      </div>
+
+      <div
+        id="ready-message"
+        style="opacity: 0; font-size: 16px; color: red; margin-top: 10px; transition: opacity 1s ease-in-out;"
+      >
+        Your photo is ready to be downloaded
+      </div>
+      <button id="download-button" style="opacity: 0;" class="upload-btn">Download</button>
+
+      <!-- Resize Prompt Box -->
+      <div
+        id="resize-prompt"
+        style="opacity: 0; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #fff; padding: 15px; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); text-align: center; transition: opacity 1s ease-in-out;"
+      >
+        <span
+          id="close-prompt"
+          style="position: absolute; top: 5px; right: 10px; cursor: pointer; font-size: 20px; color: #888; transition: color 0.3s ease;"
+          >×</span
+        >
+        <span style="color: #000;">Would you like to resize another image?</span>
+        <button id="resize-another" class="upload-btn">Resize Another Photo</button>
+      </div>
     </div>
+  </div>
 
-    <!-- Fixed Heading -->
-    <h1 id="welcome-heading">Welcome to <span class="underline">Imager</span></h1>
+  <!-- Dark Mode Toggle Button -->
+  <button id="mode-toggle" onclick="toggleMode()">
+    <img id="mode-icon" src="images-assets/moon.png" alt="Toggle Mode" width="32" height="32" />
+  </button>
 
-    <!-- Feature Boxes Container -->
-    <div id="feature-container">
-
-        <!-- Resize Feature Box -->
-        <div class="feature-box">
-            <div id="modern-text">Resize your images here.</div>
-
-            <div id="image-container">
-                <label for="upload" class="upload-btn">Upload Image</label>
-                <input type="file" id="upload" accept="image/*" style="display: none;">
-                <span id="file-name" style="margin-left: 10px; font-size: 1.2em; color: #4CAF50;"></span>
-            </div>
-
-            <div id="resize-options">
-                <input type="number" id="width" placeholder="Width (px)">
-                <input type="number" id="height" placeholder="Height (px)">
-                <button id="resize-button" onclick="resizeImage()">Resize</button>
-                <div id="tooltip">Please enter desired height/width in pixels</div>
-            </div>
-
-            <!-- Image Preview Container -->
-            <div id="image-preview-container" style="opacity: 0; text-align: center; margin-top: 20px; transition: opacity 1s ease-in-out;">
-                <img id="preview-image" src="#" alt="Resized Image Preview" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
-            </div>
-
-            <div id="ready-message" style="opacity: 0; font-size: 16px; color: red; margin-top: 10px; transition: opacity 1s ease-in-out;">Your photo is ready to be downloaded</div>
-            <button id="download-button" style="opacity: 0; background-color: red; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-top: 10px; transition: opacity 1s ease-in-out, transform 0.3s ease;">Download</button>
-
-            <!-- Resize Prompt Box -->
-            <div id="resize-prompt" style="opacity: 0; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #fff; padding: 15px; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); text-align: center; transition: opacity 1s ease-in-out;">
-                <span id="close-prompt" style="position: absolute; top: 5px; right: 10px; cursor: pointer; font-size: 20px; color: #888; transition: color 0.3s ease;">×</span>
-                <span style="color: #000;">Would you like to resize another image?</span>
-                <button id="resize-another" class="upload-btn">Resize Another Photo</button>
-            </div>
-        </div>
-
-        <!-- Add more feature boxes here in the future -->
-        <!-- Example:
-        <div class="feature-box">
-            <h2>New Feature</h2>
-            <p>Description of the new feature.</p>
-        </div>
-        -->
-    </div>
-
-    <!-- Dark Mode Toggle Button -->
-    <button id="mode-toggle" onclick="toggleMode()">
-        <img id="mode-icon" src="images-assets/moon.png" alt="Toggle Mode" width="32" height="32">
-    </button>
-
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
