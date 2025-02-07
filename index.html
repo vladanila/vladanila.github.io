@@ -8,10 +8,10 @@
   <meta http-equiv="expires" content="0" />
   <title>Imager Modern</title>
 
-  <!-- Favicon links -->
+  <!-- Favicon -->
   <link rel="icon" href="images-favicon/favicon-32x32.png" type="image/png" />
 
-  <!-- Link to modern stylesheet -->
+  <!-- Main Stylesheet -->
   <link rel="stylesheet" href="styles.css" />
 
   <!-- Google Fonts: Poppins -->
@@ -19,9 +19,12 @@
 
   <!-- Animate.css for additional animations -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+  <!-- Cropper.js CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
 </head>
 <body class="light-mode">
-  <!-- Hamburger Menu Icon -->
+  <!-- Hamburger Menu Icon (Fixed in Upper Left) -->
   <div id="menu-icon" onclick="toggleMenu()">
     <span class="bar"></span>
     <span class="bar"></span>
@@ -30,7 +33,7 @@
 
   <!-- Sidebar Menu -->
   <div id="sidebar-menu" class="sidebar">
-    <button onclick="alert('Crop Image feature coming soon!')">Crop Image</button>
+    <button onclick="switchToCropMode()">Crop Image</button>
     <button onclick="alert('Filter Effects feature coming soon!')">Filter Effects</button>
     <button onclick="alert('Rotate Image feature coming soon!')">Rotate Image</button>
     <button onclick="alert('Watermark feature coming soon!')">Watermark</button>
@@ -55,15 +58,15 @@
     </div>
   </div>
 
-  <!-- Fixed Heading -->
+  <!-- Welcome Heading (Sticky at the Top) -->
   <h1 id="welcome-heading" class="animate__animated animate__fadeInDown">
     Welcome to <span class="underline">Imager</span>
   </h1>
 
-  <!-- Feature Boxes Container -->
+  <!-- Feature Container -->
   <div id="feature-container">
-    <!-- Resize Feature Box -->
     <div class="feature-box animate__animated animate__fadeInUp">
+      <!-- Dynamic text (changes with mode) -->
       <div id="modern-text">Resize your images here.</div>
       <div id="image-container">
         <label for="upload" class="upload-btn">Upload Image</label>
@@ -71,6 +74,7 @@
         <span id="file-name" class="file-name"></span>
       </div>
 
+      <!-- Resize Options (for resize mode) -->
       <div id="resize-options">
         <input type="number" id="width" placeholder="Width (px)" />
         <input type="number" id="height" placeholder="Height (px)" />
@@ -78,31 +82,46 @@
         <div id="tooltip" class="tooltip">Enter desired dimensions in pixels</div>
       </div>
 
-      <!-- Image Preview Container -->
-      <div id="image-preview-container" class="image-preview-container">
-        <img id="preview-image" src="#" alt="Resized Image Preview" />
+      <!-- Preview & Cropper Panel -->
+      <div id="preview-wrapper" class="preview-wrapper">
+        <div id="image-preview-container" class="image-preview-container">
+          <img id="preview-image" src="#" alt="Image Preview" />
+        </div>
+        <!-- Cropper Controls (visible only in crop mode) -->
+        <div id="cropper-controls" class="cropper-controls" style="display:none;">
+          <button onclick="cropperAction('rotate', -45)">Rotate Left</button>
+          <button onclick="cropperAction('rotate', 45)">Rotate Right</button>
+          <button onclick="cropperAction('zoom', 0.1)">Zoom In</button>
+          <button onclick="cropperAction('zoom', -0.1)">Zoom Out</button>
+          <button onclick="cropperAction('reset')">Reset</button>
+          <button onclick="setAspectRatio(NaN)">Free</button>
+          <button onclick="setAspectRatio(1)">1:1</button>
+          <button onclick="setAspectRatio(16/9)">16:9</button>
+          <button onclick="setAspectRatio(4/3)">4:3</button>
+        </div>
       </div>
 
+      <!-- Ready Message -->
       <div id="ready-message" class="ready-message">
         Your photo is ready to be downloaded
       </div>
-      <!-- New Download Button -->
+      <!-- Download Button (text and behavior depend on mode) -->
       <button id="download-button" class="download-btn" onclick="downloadImage()">Download</button>
     </div>
   </div>
 
-  <!-- Dark Mode Toggle Button (Fixed to Upper Right) -->
+  <!-- Dark Mode Toggle Button (Fixed in Upper Right) -->
   <button id="mode-toggle" onclick="toggleMode()">
-    <!-- Default icon is the moon (light mode active) -->
     <svg id="mode-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
       <path d="M21 12.79A9 9 0 0112.21 3 7.5 7.5 0 0012 21a9 9 0 009-8.21z"/>
     </svg>
   </button>
 
-  <!-- GSAP for advanced animations -->
+  <!-- GSAP for animations -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <!-- Cropper.js Script -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
   <!-- Main Script -->
   <script src="script.js"></script>
 </body>
 </html>
-
