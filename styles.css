@@ -16,15 +16,18 @@ body {
   color: #333;
   text-align: center;
   transition: background 0.5s ease, color 0.5s ease;
+  /* Custom cursor for light mode */
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><circle cx='8' cy='8' r='4' stroke='black' stroke-width='2' fill='none'/></svg>") 8 8, auto;
 }
 
-/* Dark Mode */
 body.dark-mode {
   background: #1e1e2f;
   color: #f0f0f0;
+  /* Custom cursor for dark mode */
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><circle cx='8' cy='8' r='4' stroke='white' stroke-width='2' fill='none'/></svg>") 8 8, auto;
 }
 
-/* Hamburger Menu Icon */
+/* Hamburger Menu Icon - Fixed in Upper Left */
 #menu-icon {
   position: fixed;
   top: 20px;
@@ -55,7 +58,6 @@ body.dark-mode #menu-icon .bar {
   background-color: #f0f0f0;
 }
 
-/* Transform bars into an "X" when menu is open */
 #menu-icon.open .bar:nth-child(1) {
   transform: translateY(10px) rotate(45deg);
 }
@@ -66,7 +68,7 @@ body.dark-mode #menu-icon .bar {
   transform: translateY(-10px) rotate(-45deg);
 }
 
-/* Sidebar Menu */
+/* Sidebar Menu - Fixed Sliding Sidebar */
 .sidebar {
   position: fixed;
   top: 0;
@@ -134,7 +136,7 @@ body.dark-mode #project-credit {
   transform: scale(1.1);
 }
 
-/* Fixed Heading */
+/* Welcome Heading - Sticky at the Top */
 #welcome-heading {
   font-size: 2.8em;
   font-weight: 600;
@@ -146,7 +148,6 @@ body.dark-mode #project-credit {
   z-index: 100;
 }
 
-/* Underline */
 .underline {
   text-decoration: underline;
   color: #2575fc;
@@ -185,7 +186,7 @@ body.dark-mode .feature-box {
   margin-bottom: 20px;
 }
 
-/* Image Container */
+/* Image Container & Upload Button */
 #image-container {
   margin-bottom: 20px;
 }
@@ -196,7 +197,6 @@ body.dark-mode .feature-box {
   color: #2575fc;
 }
 
-/* Upload Button */
 .upload-btn {
   background: #ff512f;
   color: #fff;
@@ -222,7 +222,7 @@ body.dark-mode .feature-box {
   padding: 12px;
   margin: 10px;
   border: 1px solid #ccc;
-  border-radius: 8px; /* Changed from 25px to 8px for a more rectangular shape */
+  border-radius: 8px;
   width: 150px;
   font-size: 16px;
 }
@@ -251,29 +251,76 @@ body.dark-mode .feature-box {
   display: none;
 }
 
-/* Image Preview Container */
-.image-preview-container {
+/* Preview Wrapper */
+.preview-wrapper {
   margin-top: 20px;
   opacity: 0;
   transition: opacity 0.8s ease-in-out;
 }
 
+.preview-wrapper.crop-mode {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Preview Image Container */
+.image-preview-container {
+  width: 100%;
+}
+
+.preview-wrapper.crop-mode #image-preview-container {
+  flex: 0 0 60%;
+  max-width: 60%;
+}
+
+/* Preview Image */
 #preview-image {
   max-width: 100%;
-  /* Keeping the preview image with normal (sharp) edges */
+  max-height: 400px;
+  object-fit: contain;
   box-shadow: 0px 8px 20px rgba(0,0,0,0.1);
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  touch-action: none;
+}
+
+/* Cropper Controls */
+.cropper-controls {
+  display: none;
+  flex: 0 0 35%;
+  max-width: 35%;
+  margin-left: 20px;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cropper-controls button {
+  padding: 10px 20px;
+  background: #0072ff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cropper-controls button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
 
 /* Ready Message */
 .ready-message {
   margin-top: 15px;
   font-size: 16px;
-  color: red;  /* Changed to red */
+  color: red;
   opacity: 0;
   transition: opacity 0.8s ease-in-out;
 }
 
-/* New Download Button Styles */
+/* Download Button */
 .download-btn {
   background: #e74c3c;
   color: #fff;
@@ -296,7 +343,6 @@ body.dark-mode .feature-box {
   transform: scale(0.98);
 }
 
-/* Dark Mode Overrides */
 body.dark-mode input {
   background: #3a3a50;
   color: #f0f0f0;
@@ -320,4 +366,8 @@ body.dark-mode input {
   transition: transform 0.5s ease;
 }
 
+/* In dark mode, ensure the dark mode icon is white */
+body.dark-mode #mode-toggle svg {
+  color: #fff;
+}
 
