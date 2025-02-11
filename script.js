@@ -1,8 +1,11 @@
 // Global variables
-let currentMode = "resize";
+let currentMode = "resize"; // possible values: "resize", "crop", "convert"
 let currentCanvas = null;
 let cropperInstance = null;
 let originalImageURL = null;
+let uploadedFile = null;      // stores the uploaded file object
+let convertedImageURL = null; // stores the converted image data URL
+let convertedFileType = "";   // stores the target conversion type (e.g., "jpeg", "png", "webp", "gif", etc.)
 
 /* Toggle the sidebar menu */
 function toggleMenu() {
@@ -17,15 +20,16 @@ function toggleMenu() {
   }
 }
 
-/* Reset the form and destroy cropper instance if needed */
+/* Reset the form and destroy any existing processor */
 function resetForm() {
   document.getElementById("upload").value = "";
-  document.getElementById("file-name").textContent = "";
+  document.getElementById("file-name").innerHTML = "";
   document.getElementById("width").value = "";
   document.getElementById("height").value = "";
   document.getElementById("ready-message").style.opacity = "0";
   document.getElementById("preview-wrapper").style.opacity = "0";
   currentCanvas = null;
+  convertedImageURL = null;
   if (cropperInstance) {
     cropperInstance.destroy();
     cropperInstance = null;
@@ -39,12 +43,10 @@ function toggleMode() {
   if (body.classList.contains("light-mode")) {
     body.classList.remove("light-mode");
     body.classList.add("dark-mode");
-    // Use the minimal sun icon for dark mode (SVG path remains the same, but CSS forces its color to white)
     modeIcon.innerHTML = '<path d="M12 4V2m0 20v-2m8-8h2M2 12H4m15.364-7.364l1.414-1.414M4.222 19.778l1.414-1.414m12.728 1.414l1.414-1.414M4.222 4.222l1.414 1.414M12 8a4 4 0 100 8 4 4 0 000-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
   } else {
-    body.classList.remove("dark-mode");
-    body.classList.add("light-mode");
-    // Use the minimal moon icon for light mode
+    body.classList.remove("light-mode");
+    body.classList.add("dark-mode");
     modeIcon.innerHTML = '<path d="M21 12.79A9 9 0 0112.21 3 7.5 7.5 0 0012 21a9 9 0 009-8.21z"/>';
   }
   gsap.fromTo(
@@ -54,27 +56,45 @@ function toggleMode() {
   );
 }
 
-/* Handle image upload */
+/* Handle image upload; update file name with extension in bold and show conversion options */
 document.getElementById("upload").addEventListener("change", function (event) {
   const file = event.target.files[0];
   if (file) {
+    uploadedFile = file; // store file for conversion later
     alert("Image successfully uploaded!");
-    document.getElementById("file-name").textContent = file.name;
+    let fileName = file.name;
+    let dotIndex = fileName.lastIndexOf(".");
+    if (dotIndex !== -1) {
+      let base = fileName.substring(0, dotIndex);
+      let ext = fileName.substring(dotIndex); // includes the dot
+      document.getElementById("file-name").innerHTML = base + " <strong>" + ext + "</strong>";
+    } else {
+      document.getElementById("file-name").textContent = fileName;
+    }
+    // Show conversion options container
+    document.getElementById("conversion-options").style.display = "flex";
     const reader = new FileReader();
     reader.onload = function (e) {
       originalImageURL = e.target.result;
       const imgElement = document.getElementById("preview-image");
       imgElement.src = originalImageURL;
+      // If in crop mode, initialize Cropper
       if (currentMode === "crop") {
         if (cropperInstance) {
           cropperInstance.destroy();
         }
         cropperInstance = new Cropper(imgElement, {
-          aspectRatio: NaN,
           viewMode: 1,
           autoCropArea: 1,
           responsive: true,
-          dragMode: 'crop'
+          background: false,
+          modal: true,
+          guides: false,
+          highlight: false,
+          dragMode: 'crop',
+          checkOrientation: false,
+          cropBoxMovable: true,
+          cropBoxResizable: true
         });
         gsap.to("#preview-wrapper", { duration: 0.8, opacity: 1, ease: "power2.out" });
         gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
@@ -84,7 +104,7 @@ document.getElementById("upload").addEventListener("change", function (event) {
   }
 });
 
-/* Resize image (resize mode) */
+/* Resize image (for resize mode) */
 function resizeImage() {
   const width = document.getElementById("width").value;
   const height = document.getElementById("height").value;
@@ -122,22 +142,23 @@ function resizeImage() {
 /* Switch to Crop Mode */
 function switchToCropMode() {
   currentMode = "crop";
-  // Hide resize options and update texts
+  // Hide resize and conversion options; show cropper controls
   document.getElementById("resize-options").style.display = "none";
+  document.getElementById("conversion-options").style.display = "none";
+  document.getElementById("cropper-controls").style.display = "flex";
   document.getElementById("modern-text").textContent = "Crop your image";
   document.getElementById("download-button").textContent = "Download Cropped Image";
   
-  // Automatically close the sidebar (hamburger menu) if it is open
+  // Close the sidebar if open
   const sidebar = document.getElementById("sidebar-menu");
   if (sidebar.style.left === "0px") {
     toggleMenu();
   }
   
-  // Show preview-wrapper as flex and display cropper controls
+  // Show preview wrapper as flex and add crop-mode class
   const previewWrapper = document.getElementById("preview-wrapper");
   previewWrapper.style.display = "flex";
   previewWrapper.classList.add("crop-mode");
-  document.getElementById("cropper-controls").style.display = "flex";
   
   const imgElement = document.getElementById("preview-image");
   if (originalImageURL) {
@@ -146,34 +167,109 @@ function switchToCropMode() {
       cropperInstance.destroy();
     }
     cropperInstance = new Cropper(imgElement, {
-      aspectRatio: NaN,
       viewMode: 1,
       autoCropArea: 1,
       responsive: true,
-      dragMode: 'crop'
+      background: false,
+      modal: true,
+      guides: false,
+      highlight: false,
+      dragMode: 'crop',
+      checkOrientation: false,
+      cropBoxMovable: true,
+      cropBoxResizable: true
     });
     gsap.to("#preview-wrapper", { duration: 0.8, opacity: 1, ease: "power2.out" });
     gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
   }
-  // If no image is uploaded, do nothing (no alert)
 }
 
-/* Cropper Actions */
+/* Since the Convert mode is no longer triggered by a sidebar button,
+   conversion options are always visible after upload. When a conversion button is clicked,
+   we set currentMode to "convert" and process the conversion. */
+  
+/* Toggle More Conversion Options with a slide-right animation */
+function toggleMoreOptions() {
+  const moreOptions = document.getElementById("more-convert-options");
+  if (moreOptions.style.display === "flex") {
+    gsap.to(moreOptions, {
+      duration: 0.5,
+      x: -50,
+      opacity: 0,
+      onComplete: function() {
+        moreOptions.style.display = "none";
+        moreOptions.style.transform = "none";
+      }
+    });
+  } else {
+    moreOptions.style.display = "flex";
+    gsap.fromTo(moreOptions, { x: -50, opacity: 0 }, { duration: 0.5, x: 0, opacity: 1 });
+  }
+}
+
+/* Convert the uploaded image to a specified file type */
+function convertTo(targetType) {
+  if (!originalImageURL) {
+    alert("Please upload an image first.");
+    return;
+  }
+  currentMode = "convert";  // switch mode to convert
+  const img = new Image();
+  img.onload = function() {
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    let mimeType;
+    if (targetType === "jpeg") {
+      mimeType = "image/jpeg";
+    } else if (targetType === "png") {
+      mimeType = "image/png";
+    } else if (targetType === "webp") {
+      mimeType = "image/webp";
+    } else if (targetType === "gif") {
+      mimeType = "image/gif";
+    } else if (targetType === "bmp") {
+      mimeType = "image/bmp";
+    } else if (targetType === "ico") {
+      mimeType = "image/x-icon";
+    } else {
+      mimeType = "image/png";
+    }
+    const dataURL = canvas.toDataURL(mimeType);
+    convertedFileType = targetType;
+    // Show the loading spinner for 2 seconds
+    document.getElementById("loading-spinner").style.display = "block";
+    const readyMsg = document.getElementById("ready-message");
+    readyMsg.textContent = "Processing conversion...";
+    setTimeout(function() {
+      document.getElementById("loading-spinner").style.display = "none";
+      document.getElementById("preview-image").src = dataURL;
+      let ext = (targetType === "jpeg") ? ".jpg" : "." + targetType;
+      readyMsg.textContent = "Your image is successfully converted to " + ext;
+      convertedImageURL = dataURL;
+    }, 2000);
+  };
+  img.src = originalImageURL;
+}
+
+/* Cropper actions: rotate, zoom, reset */
 function cropperAction(action, param) {
   if (!cropperInstance) {
     alert("Cropper is not initialized.");
     return;
   }
-  if (action === 'rotate') {
+  if (action === "rotate") {
     cropperInstance.rotate(param);
-  } else if (action === 'zoom') {
+  } else if (action === "zoom") {
     cropperInstance.zoom(param);
-  } else if (action === 'reset') {
+  } else if (action === "reset") {
     cropperInstance.reset();
   }
 }
 
-/* Set Aspect Ratio */
+/* Set aspect ratio for cropping */
 function setAspectRatio(ratio) {
   if (!cropperInstance) {
     alert("Cropper is not initialized.");
@@ -182,7 +278,7 @@ function setAspectRatio(ratio) {
   cropperInstance.setAspectRatio(ratio);
 }
 
-/* Download the image (behavior depends on mode) */
+/* Download the image based on current mode */
 function downloadImage() {
   if (currentMode === "crop") {
     if (!cropperInstance) {
@@ -201,7 +297,21 @@ function downloadImage() {
     link.click();
     document.body.removeChild(link);
     gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
+  } else if (currentMode === "convert") {
+    if (!convertedImageURL) {
+      alert("Please convert the image first.");
+      return;
+    }
+    const link = document.createElement("a");
+    link.href = convertedImageURL;
+    let ext = (convertedFileType === "jpeg") ? "jpg" : convertedFileType;
+    link.download = "converted-image." + ext;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
   } else {
+    // Resize mode
     if (!currentCanvas) {
       alert("Please resize an image first.");
       return;
