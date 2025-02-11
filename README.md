@@ -1,6 +1,6 @@
-# **Imager: The Ultimate Image Resizer Tool**
+# **Imagist: The Ultimate Image Resizer Tool**
 
-**Imager** is a fast and simple online tool that allows you to resize your images with ease. Whether you need to adjust the size for web, social media, or any other purpose, **Imager** is the perfect tool for quick image resizing.
+**Imagist** is a fast and simple online tool that allows you to resize your images with ease. Whether you need to adjust the size for web, social media, or any other purpose, **Imagist** is the perfect tool for quick image resizing.
 
 ## **Features**
 
@@ -22,13 +22,12 @@
 - **HTML5**: To structure the webpage.
 - **CSS3**: For styling, animations, and creating a responsive design.
 - **JavaScript**: To handle image resizing functionality, light/dark mode toggling, and interactive elements.
-- **Google Fonts**: For the custom Manrope font that adds a modern feel to the website.
 
 ## **Getting Started**
 
-To get started with **Imager**, you can:
+To get started with **Imagist**, you can:
 
-1. Visit the live version here: [**Imager**](https://vladanila.github.io/)
+1. Visit the live version here: [**Imagist**](https://vladanila.github.io/)
 - This is made as a part of my hobby, feel free to use it as much as you like!
    (-vladanila/Geetartha)
 
