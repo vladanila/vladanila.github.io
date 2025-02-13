@@ -6,7 +6,7 @@
   <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="pragma" content="no-cache" />
   <meta http-equiv="expires" content="0" />
-  <title>Imagist Modern</title>
+  <title>Imagist by Geetartha</title>
 
   <!-- Favicon -->
   <link rel="icon" href="images-favicon/favicon-32x32.png" type="image/png" />
@@ -33,9 +33,15 @@
 
   <!-- Sidebar Menu -->
   <div id="sidebar-menu" class="sidebar">
+    <!-- Home Button appears in the upper right of the sidebar -->
+    <div id="home-button" onclick="goHome()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="home-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+    </div>
     <button onclick="switchToCropMode()">Crop Image</button>
     <button onclick="alert('Filter Effects feature coming soon!')">Filter Effects</button>
-    <!-- The Convert Image Type button has been removed -->
+    <button onclick="switchToConvertMode()">Convert Image</button>
     <button onclick="alert('Watermark feature coming soon!')">Watermark</button>
     <button onclick="alert('Make Collage feature coming soon!')">Make Collage</button>
     <button onclick="alert('Add Border feature coming soon!')">Add Border</button>
@@ -54,6 +60,12 @@
             <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53A4.48 4.48 0 0 0 22.43 1a9.09 9.09 0 0 1-2.88 1.1A4.51 4.51 0 0 0 16.11 0a4.51 4.51 0 0 0-4.48 5.53 12.85 12.85 0 0 1-9.29-4.7 4.51 4.51 0 0 0 1.39 6.02A4.5 4.5 0 0 1 .96 7.71v.05a4.51 4.51 0 0 0 3.62 4.42A4.53 4.53 0 0 1 3 12.04a4.51 4.51 0 0 0 4.22 3.12A9.04 9.04 0 0 1 .87 17.57a12.79 12.79 0 0 0 6.92 2.03c8.3 0 12.85-6.87 12.85-12.85v-.59A9.22 9.22 0 0 0 23 3z"/>
           </svg>
         </a>
+        <a href="https://github.com/vladanila/vladanila.github.io" target="_blank" title="GitHub">
+          <svg role="img" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+            <title>GitHub</title>
+            <path d="M12 .297a12 12 0 00-3.79 23.398c.6.113.82-.258.82-.577v-2.234c-3.338.724-4.042-1.416-4.042-1.416-.546-1.387-1.333-1.757-1.333-1.757-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.236 1.84 1.236 1.07 1.835 2.807 1.305 3.492.998.108-.775.418-1.305.762-1.605-2.665-.304-5.466-1.335-5.466-5.93 0-1.31.47-2.38 1.235-3.22-.123-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23a11.52 11.52 0 013.003-.404c1.02.005 2.045.138 3.003.404 2.29-1.553 3.297-1.23 3.297-1.23.653 1.653.241 2.874.12 3.176.77.84 1.233 1.91 1.233 3.22 0 4.61-2.803 5.624-5.475 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.218.694.825.576A12.001 12.001 0 0012 .297z"/>
+          </svg>
+        </a>
       </div>
     </div>
   </div>
@@ -66,42 +78,46 @@
   <!-- Feature Container -->
   <div id="feature-container">
     <div class="feature-box animate__animated animate__fadeInUp">
-      <!-- Dynamic text (changes with mode) -->
+      <!-- Dynamic Text -->
       <div id="modern-text">Resize your images here.</div>
+      
+      <!-- UPLOAD SECTION for RESIZE/CROP/CONVERT modes -->
       <div id="image-container">
         <label for="upload" class="upload-btn">Upload Image</label>
         <input type="file" id="upload" accept="image/*" hidden />
-        <!-- File name and extension (extension in bold) -->
         <span id="file-name" class="file-name"></span>
-        <!-- CONVERSION OPTIONS: List of small file-type buttons -->
-        <div id="conversion-options" class="convert-controls" style="display:none;">
+      </div>
+      
+      <!-- CONVERSION SECTION (visible only in CONVERT mode) -->
+      <div id="conversion-section" style="display:none; margin-top:20px;">
+        <!-- Conversion Options -->
+        <div id="conversion-options" class="convert-controls">
           <button onclick="convertTo('jpeg')">.jpg</button>
           <button onclick="convertTo('png')">.png</button>
           <button onclick="convertTo('webp')">.webp</button>
           <button onclick="toggleMoreOptions()">More</button>
-          <!-- Hidden extra file types -->
-          <div id="more-convert-options" class="more-convert-options" style="display:none;">
+          <div id="more-convert-options" class="more-convert-options">
             <button onclick="convertTo('gif')">.gif</button>
             <button onclick="convertTo('bmp')">.bmp</button>
             <button onclick="convertTo('ico')">.ico</button>
           </div>
         </div>
       </div>
-
-      <!-- Resize Options (visible in resize mode) -->
+      
+      <!-- RESIZE OPTIONS (visible in RESIZE mode) -->
       <div id="resize-options">
         <input type="number" id="width" placeholder="Width (px)" />
         <input type="number" id="height" placeholder="Height (px)" />
         <button id="resize-button" onclick="resizeImage()">Resize</button>
         <div id="tooltip" class="tooltip">Enter desired dimensions in pixels</div>
       </div>
-
+      
       <!-- Preview & Processing Panel -->
       <div id="preview-wrapper" class="preview-wrapper">
         <div id="image-preview-container" class="image-preview-container">
           <img id="preview-image" src="#" alt="Image Preview" />
         </div>
-        <!-- Cropper Controls (visible in crop mode) -->
+        <!-- Cropper Controls (visible in CROP mode) -->
         <div id="cropper-controls" class="cropper-controls" style="display:none;">
           <button onclick="cropperAction('rotate', -45)">Rotate Left</button>
           <button onclick="cropperAction('rotate', 45)">Rotate Right</button>
@@ -114,15 +130,16 @@
           <button onclick="setAspectRatio(4/3)">4:3</button>
         </div>
       </div>
-
+      
       <!-- Loading Spinner (shown during conversion) -->
       <div id="loading-spinner" class="loading-spinner" style="display:none;"></div>
-
-      <!-- Ready Message -->
+      
+      <!-- Ready Message (will display conversion success text above the download button) -->
       <div id="ready-message" class="ready-message">
         Your photo is ready to be downloaded
       </div>
-      <!-- Download Button (text and behavior change based on mode) -->
+      
+      <!-- Download Button -->
       <button id="download-button" class="download-btn" onclick="downloadImage()">Download</button>
     </div>
   </div>
@@ -134,7 +151,7 @@
       <path d="M21 12.79A9 9 0 0112.21 3 7.5 7.5 0 0012 21a9 9 0 009-8.21z"/>
     </svg>
   </button>
-
+  
   <!-- GSAP for animations -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <!-- Cropper.js Script -->
