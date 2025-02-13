@@ -1,373 +1,521 @@
-// Global variables
-let currentMode = "resize"; // possible values: "resize", "crop", "convert"
-let currentCanvas = null;
-let cropperInstance = null;
-let originalImageURL = null;
-let uploadedFile = null;      // stores the uploaded file object
-let convertedImageURL = null; // stores the converted image data URL
-let convertedFileType = "";   // stores the target conversion type (e.g., "jpeg", "png", etc.)
-
-// Home button function: animate and refresh the page
-function goHome() {
-  gsap.to("#home-button", {
-    duration: 0.5,
-    scale: 1.2,
-    ease: "power1.inOut",
-    onComplete: function() {
-      window.location.reload();
-    }
-  });
+/* Reset and Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  transition: all 0.25s ease-in-out;
 }
 
-/* Toggle the sidebar menu */
-function toggleMenu() {
-  const sidebar = document.getElementById("sidebar-menu");
-  const menuIcon = document.getElementById("menu-icon");
-  if (sidebar.style.left === "0px") {
-    gsap.to(sidebar, { duration: 0.4, left: "-280px", ease: "power2.out" });
-    menuIcon.classList.remove("open");
-  } else {
-    gsap.to(sidebar, { duration: 0.4, left: "0px", ease: "power2.out" });
-    menuIcon.classList.add("open");
-  }
+html {
+  scroll-behavior: smooth;
 }
 
-/* Reset the form and destroy any existing processor */
-function resetForm() {
-  document.getElementById("upload").value = "";
-  document.getElementById("file-name").innerHTML = "";
-  document.getElementById("width").value = "";
-  document.getElementById("height").value = "";
-  document.getElementById("ready-message").style.opacity = "0";
-  document.getElementById("preview-wrapper").style.opacity = "0";
-  currentCanvas = null;
-  convertedImageURL = null;
-  if (cropperInstance) {
-    cropperInstance.destroy();
-    cropperInstance = null;
-  }
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #f0f2f5, #ffffff);
+  color: #333;
+  text-align: center;
+  transition: background 0.5s ease, color 0.5s ease;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><circle cx='8' cy='8' r='4' stroke='black' stroke-width='2' fill='none'/></svg>") 8 8, auto;
 }
 
-/* Toggle between light and dark modes */
-function toggleMode() {
-  const body = document.body;
-  const modeIcon = document.getElementById("mode-icon");
-  if (body.classList.contains("dark-mode")) {
-    body.classList.remove("dark-mode");
-    body.classList.add("light-mode");
-    modeIcon.innerHTML = '<path d="M21 12.79A9 9 0 0112.21 3 7.5 7.5 0 0012 21a9 9 0 009-8.21z"/>';
-  } else {
-    body.classList.remove("light-mode");
-    body.classList.add("dark-mode");
-    modeIcon.innerHTML = '<path d="M12 4V2m0 20v-2m8-8h2M2 12H4m15.364-7.364l1.414-1.414M4.222 19.778l1.414-1.414m12.728 1.414l1.414-1.414M4.222 4.222l1.414 1.414M12 8a4 4 0 100 8 4 4 0 000-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
-  }
-  gsap.fromTo(
-    modeIcon,
-    { rotation: 0 },
-    { duration: 1, rotation: 360, ease: "elastic.out(1, 0.3)" }
-  );
+body.dark-mode {
+  background: #1e1e2f;
+  color: #f0f0f0;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><circle cx='8' cy='8' r='4' stroke='white' stroke-width='2' fill='none'/></svg>") 8 8, auto;
 }
 
-/* Handle image upload; update file name and show preview */
-document.getElementById("upload").addEventListener("change", function (event) {
-  const file = event.target.files[0];
-  if (file) {
-    uploadedFile = file; // store file for conversion later
-    alert("Image successfully uploaded!");
-    let fileName = file.name;
-    let dotIndex = fileName.lastIndexOf(".");
-    if (dotIndex !== -1) {
-      let base = fileName.substring(0, dotIndex);
-      let ext = fileName.substring(dotIndex);
-      document.getElementById("file-name").innerHTML = base + " <strong>" + ext + "</strong>";
-    } else {
-      document.getElementById("file-name").textContent = fileName;
-    }
-    // Show conversion options only if in convert mode
-    if (currentMode === "convert") {
-      document.getElementById("conversion-options").style.display = "flex";
-    } else {
-      document.getElementById("conversion-options").style.display = "none";
-    }
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      originalImageURL = e.target.result;
-      const imgElement = document.getElementById("preview-image");
-      imgElement.src = originalImageURL;
-      // If in crop mode, initialize Cropper
-      if (currentMode === "crop") {
-        if (cropperInstance) {
-          cropperInstance.destroy();
-        }
-        cropperInstance = new Cropper(imgElement, {
-          viewMode: 1,
-          autoCropArea: 1,
-          responsive: true,
-          background: false,
-          modal: true,
-          guides: false,
-          highlight: false,
-          dragMode: 'crop',
-          checkOrientation: false,
-          cropBoxMovable: true,
-          cropBoxResizable: true
-        });
-        gsap.to("#preview-wrapper", { duration: 0.8, opacity: 1, ease: "power2.out" });
-        gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
-      }
-      // If in convert mode, show preview wrapper
-      if (currentMode === "convert") {
-        gsap.to("#preview-wrapper", { duration: 0.8, opacity: 1, ease: "power2.out" });
-      }
-    };
-    reader.readAsDataURL(file);
-  }
-});
-
-/* Resize image (for resize mode) */
-function resizeImage() {
-  const width = document.getElementById("width").value;
-  const height = document.getElementById("height").value;
-  if (!width || !height) {
-    alert("Please enter both width and height.");
-    return;
-  }
-  const fileInput = document.getElementById("upload");
-  const file = fileInput.files[0];
-  if (!file) {
-    alert("Please upload an image first.");
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = function (event) {
-    const img = new Image();
-    img.src = event.target.result;
-    img.onload = function () {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      canvas.width = width;
-      canvas.height = height;
-      ctx.drawImage(img, 0, 0, width, height);
-      currentCanvas = canvas;
-      const previewImage = document.getElementById("preview-image");
-      previewImage.src = canvas.toDataURL();
-      gsap.to("#preview-wrapper", { duration: 0.8, opacity: 1, ease: "power2.out" });
-      gsap.to("#ready-message", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.5 });
-      gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.5 });
-    };
-  };
-  reader.readAsDataURL(file);
+/* Ensure all buttons use the same font */
+button {
+  font-family: 'Poppins', sans-serif;
 }
 
-/* Switch to Crop Mode */
-function switchToCropMode() {
-  currentMode = "crop";
-  // Hide resize and conversion sections; show cropper controls
-  document.getElementById("resize-options").style.display = "none";
-  document.getElementById("conversion-section").style.display = "none";
-  document.getElementById("cropper-controls").style.display = "flex";
-  document.getElementById("modern-text").textContent = "Crop your image";
-  document.getElementById("download-button").textContent = "Download Cropped Image";
-  
-  // Close sidebar if open
-  const sidebar = document.getElementById("sidebar-menu");
-  if (sidebar.style.left === "0px") {
-    toggleMenu();
-  }
-  
-  // Show preview wrapper and add crop-mode class
-  const previewWrapper = document.getElementById("preview-wrapper");
-  previewWrapper.style.display = "flex";
-  previewWrapper.classList.add("crop-mode");
-  
-  const imgElement = document.getElementById("preview-image");
-  if (originalImageURL) {
-    imgElement.src = originalImageURL;
-    if (cropperInstance) {
-      cropperInstance.destroy();
-    }
-    cropperInstance = new Cropper(imgElement, {
-      viewMode: 1,
-      autoCropArea: 1,
-      responsive: true,
-      background: false,
-      modal: true,
-      guides: false,
-      highlight: false,
-      dragMode: 'crop',
-      checkOrientation: false,
-      cropBoxMovable: true,
-      cropBoxResizable: true
-    });
-    gsap.to("#preview-wrapper", { duration: 0.8, opacity: 1, ease: "power2.out" });
-    gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
-  }
+/* Hamburger Menu Icon - Fixed in Upper Left */
+#menu-icon {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 35px;
+  height: 30px;
+  cursor: pointer;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s ease;
 }
 
-/* Switch to Convert Mode */
-function switchToConvertMode() {
-  currentMode = "convert";
-  // Show the conversion section and hide the resize and cropper controls
-  document.getElementById("resize-options").style.display = "none";
-  document.getElementById("cropper-controls").style.display = "none";
-  document.getElementById("conversion-section").style.display = "block";
-  document.getElementById("conversion-options").style.display = "flex";
-  document.getElementById("modern-text").textContent = "Convert image type";
-  document.getElementById("download-button").textContent = "Download Converted Image";
-  
-  // Close sidebar if open
-  const sidebar = document.getElementById("sidebar-menu");
-  if (sidebar.style.left === "0px") {
-    toggleMenu();
-  }
-  
-  // Show preview wrapper and remove crop-mode class
-  const previewWrapper = document.getElementById("preview-wrapper");
-  previewWrapper.style.display = "flex";
-  previewWrapper.classList.remove("crop-mode");
-  gsap.to("#preview-wrapper", { duration: 0.8, opacity: 1, ease: "power2.out" });
-  
-  const imgElement = document.getElementById("preview-image");
-  if (originalImageURL) {
-    imgElement.src = originalImageURL;
-  }
+#menu-icon:hover {
+  transform: scale(1.1);
 }
 
-/* Toggle More Conversion Options with a slide-right animation */
-function toggleMoreOptions() {
-  const moreOptions = document.getElementById("more-convert-options");
-  if (moreOptions.style.display === "flex") {
-    gsap.to(moreOptions, {
-      duration: 0.5,
-      x: -50,
-      opacity: 0,
-      onComplete: function() {
-        moreOptions.style.display = "none";
-        moreOptions.style.transform = "none";
-      }
-    });
-  } else {
-    moreOptions.style.display = "flex";
-    gsap.fromTo(moreOptions, { x: -50, opacity: 0 }, { duration: 0.5, x: 0, opacity: 1 });
-  }
+#menu-icon .bar {
+  height: 3px;
+  width: 100%;
+  background-color: #333;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 
-/* Convert the uploaded image to a specified file type */
-function convertTo(targetType) {
-  if (!originalImageURL) {
-    alert("Please upload an image first.");
-    return;
-  }
-  const img = new Image();
-  img.onload = function() {
-    const canvas = document.createElement("canvas");
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0);
-    let mimeType;
-    if (targetType === "jpeg") {
-      mimeType = "image/jpeg";
-    } else if (targetType === "png") {
-      mimeType = "image/png";
-    } else if (targetType === "webp") {
-      mimeType = "image/webp";
-    } else if (targetType === "gif") {
-      mimeType = "image/gif";
-    } else if (targetType === "bmp") {
-      mimeType = "image/bmp";
-    } else if (targetType === "ico") {
-      mimeType = "image/x-icon";
-    } else {
-      mimeType = "image/png";
-    }
-    const dataURL = canvas.toDataURL(mimeType);
-    convertedFileType = targetType;
-    // Show the loading spinner for 2 seconds
-    document.getElementById("loading-spinner").style.display = "block";
-    const readyMsg = document.getElementById("ready-message");
-    readyMsg.textContent = "Processing conversion...";
-    setTimeout(function() {
-      document.getElementById("loading-spinner").style.display = "none";
-      document.getElementById("preview-image").src = dataURL;
-      let ext = (targetType === "jpeg") ? ".jpg" : "." + targetType;
-      readyMsg.textContent = "Your image is successfully converted to " + ext + " and is ready to be downloaded.";
-      convertedImageURL = dataURL;
-      gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
-      gsap.to("#ready-message", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.5 });
-    }, 2000);
-  };
-  img.src = originalImageURL;
+body.dark-mode #menu-icon .bar {
+  background-color: #f0f0f0;
 }
 
-/* Cropper actions: rotate, zoom, reset */
-function cropperAction(action, param) {
-  if (!cropperInstance) {
-    alert("Cropper is not initialized.");
-    return;
-  }
-  if (action === "rotate") {
-    cropperInstance.rotate(param);
-  } else if (action === "zoom") {
-    cropperInstance.zoom(param);
-  } else if (action === "reset") {
-    cropperInstance.reset();
-  }
+#menu-icon.open .bar:nth-child(1) {
+  transform: translateY(10px) rotate(45deg);
+}
+#menu-icon.open .bar:nth-child(2) {
+  opacity: 0;
+}
+#menu-icon.open .bar:nth-child(3) {
+  transform: translateY(-10px) rotate(-45deg);
 }
 
-/* Set aspect ratio for cropping */
-function setAspectRatio(ratio) {
-  if (!cropperInstance) {
-    alert("Cropper is not initialized.");
-    return;
-  }
-  cropperInstance.setAspectRatio(ratio);
+/* Home Button in Sidebar */
+#home-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+#home-button:hover {
+  transform: scale(1.2);
+}
+#home-button .home-icon {
+  width: 32px;
+  height: 32px;
 }
 
-/* Download the image based on current mode */
-function downloadImage() {
-  if (currentMode === "crop") {
-    if (!cropperInstance) {
-      alert("Please crop your image first.");
-      return;
-    }
-    const croppedCanvas = cropperInstance.getCroppedCanvas();
-    if (!croppedCanvas) {
-      alert("Crop your image first.");
-      return;
-    }
-    const link = document.createElement("a");
-    link.href = croppedCanvas.toDataURL("image/png");
-    link.download = "cropped-image.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
-  } else if (currentMode === "convert") {
-    if (!convertedImageURL) {
-      alert("Please convert the image first.");
-      return;
-    }
-    const link = document.createElement("a");
-    link.href = convertedImageURL;
-    let ext = (convertedFileType === "jpeg") ? "jpg" : convertedFileType;
-    link.download = "converted-image." + ext;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
-  } else {
-    // Resize mode
-    if (!currentCanvas) {
-      alert("Please resize an image first.");
-      return;
-    }
-    const link = document.createElement("a");
-    link.href = currentCanvas.toDataURL("image/png");
-    link.download = "resized-image.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
-  }
+/* Sidebar Menu - Fixed Sliding Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100%;
+  background: linear-gradient(145deg, #ffffff, #e6e6e6);
+  box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+  transition: left 0.4s ease;
+  z-index: 1050;
+  padding-top: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+
+body.dark-mode .sidebar {
+  background: linear-gradient(145deg, #2a2a3c, #1e1e2f);
+}
+
+.sidebar button {
+  width: 80%;
+  padding: 12px;
+  margin: 10px 0;
+  background: #2575fc;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sidebar button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+#project-credit {
+  margin-top: auto;
+  margin-bottom: 20px;
+  font-size: 12px;
+  color: #666;
+}
+
+body.dark-mode #project-credit {
+  color: #aaa;
+}
+
+/* Social Media Icons */
+#social-media {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+#social-media a {
+  display: inline-block;
+  color: #2575fc;
+  transition: transform 0.3s ease;
+}
+
+#social-media a:hover {
+  transform: scale(1.1);
+}
+
+/* Welcome Heading - Sticky at the Top */
+#welcome-heading {
+  font-size: 2.8em;
+  font-weight: 600;
+  margin-top: 40px;
+  padding: 20px 0;
+  position: sticky;
+  top: 0;
+  background: transparent;
+  z-index: 100;
+}
+
+.underline {
+  text-decoration: underline;
+  color: #2575fc;
+}
+
+/* Feature Container */
+#feature-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+/* Feature Box */
+.feature-box {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 40px;
+  box-shadow: 0px 8px 20px rgba(0,0,0,0.05);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.feature-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 12px 25px rgba(0,0,0,0.1);
+}
+
+body.dark-mode .feature-box {
+  background: #2a2a3c;
+  box-shadow: 0px 8px 20px rgba(0,0,0,0.3);
+}
+
+/* Modern Text */
+#modern-text {
+  font-size: 1.6em;
+  margin-bottom: 20px;
+}
+
+/* Image Container & Upload Button */
+#image-container {
+  margin-bottom: 20px;
+}
+
+.file-name {
+  margin-left: 10px;
+  font-size: 1.1em;
+  color: #2575fc;
+}
+
+.upload-btn {
+  background: #ff512f;
+  color: #fff;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.upload-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* CONVERSION SECTION (for CONVERT mode) */
+#conversion-section {
+  display: none;
+  margin-top: 20px;
+}
+
+.convert-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.convert-controls button,
+.more-convert-options button {
+  padding: 10px 16px;
+  background: #009688;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.convert-controls button:hover,
+.more-convert-options button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+.more-convert-options {
+  display: none;
+  margin-top: 5px;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* FILTER SECTION */
+#filter-section {
+  display: none;
+  margin-top: 20px;
+}
+
+.filter-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.filter-controls button {
+  padding: 10px 16px;
+  background: #8e44ad;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.filter-controls button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+/* WATERMARK SECTION */
+#watermark-section {
+  display: none;
+  margin-top: 20px;
+}
+
+#watermark-section input {
+  padding: 10px;
+  margin-right: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* COLLAGE SECTION */
+#collage-section {
+  display: none;
+  margin-top: 20px;
+}
+
+.collage-upload-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* BORDER SECTION */
+#border-section {
+  display: none;
+  margin-top: 20px;
+}
+
+#border-section input[type="number"] {
+  padding: 10px;
+  margin-right: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+#border-section input[type="color"] {
+  padding: 0;
+  margin-right: 10px;
+  border: none;
+}
+
+/* RESIZE OPTIONS */
+#resize-options {
+  margin: 20px 0;
+}
+
+#resize-options input {
+  padding: 12px;
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 150px;
+  font-size: 16px;
+}
+
+#resize-options button {
+  padding: 12px 25px;
+  background: #0072ff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#resize-options button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* Tooltip */
+.tooltip {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #ff6b6b;
+  display: none;
+}
+
+/* Preview Wrapper */
+.preview-wrapper {
+  margin-top: 20px;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+
+.preview-wrapper.crop-mode {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Preview Image Container */
+.image-preview-container {
+  width: 100%;
+}
+
+.preview-wrapper.crop-mode #image-preview-container {
+  flex: 0 0 60%;
+  max-width: 60%;
+}
+
+/* Preview Image */
+#preview-image {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  box-shadow: 0px 8px 20px rgba(0,0,0,0.1);
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  touch-action: none;
+}
+
+/* Cropper Controls */
+.cropper-controls {
+  display: none;
+  flex: 0 0 35%;
+  max-width: 35%;
+  margin-left: 20px;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cropper-controls button {
+  padding: 10px 20px;
+  background: #0072ff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cropper-controls button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #0072ff;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 2s linear infinite;
+  margin: 20px auto;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Ready Message */
+.ready-message {
+  margin-top: 15px;
+  font-size: 16px;
+  color: red;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+
+/* Download Button */
+.download-btn {
+  background: #e74c3c;
+  color: #fff;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 15px;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out, transform 0.3s ease;
+}
+
+.download-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.download-btn:active {
+  transform: scale(0.98);
+}
+
+body.dark-mode input {
+  background: #3a3a50;
+  color: #f0f0f0;
+  border: 1px solid #555;
+}
+
+/* Dark Mode Toggle Button */
+#mode-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1100;
+}
+
+#mode-toggle svg {
+  width: 32px;
+  height: 32px;
+  transition: transform 0.5s ease;
+}
+
+body.dark-mode #mode-toggle svg {
+  color: #fff;
+}
+
