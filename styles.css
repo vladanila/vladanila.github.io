@@ -16,15 +16,18 @@ body {
   color: #333;
   text-align: center;
   transition: background 0.5s ease, color 0.5s ease;
-  /* Custom cursor for light mode */
   cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><circle cx='8' cy='8' r='4' stroke='black' stroke-width='2' fill='none'/></svg>") 8 8, auto;
 }
 
 body.dark-mode {
   background: #1e1e2f;
   color: #f0f0f0;
-  /* Custom cursor for dark mode */
   cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><circle cx='8' cy='8' r='4' stroke='white' stroke-width='2' fill='none'/></svg>") 8 8, auto;
+}
+
+/* Ensure all buttons use the same font */
+button {
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Hamburger Menu Icon - Fixed in Upper Left */
@@ -66,6 +69,22 @@ body.dark-mode #menu-icon .bar {
 }
 #menu-icon.open .bar:nth-child(3) {
   transform: translateY(-10px) rotate(-45deg);
+}
+
+/* Home Button in Sidebar */
+#home-button {
+  position: absolute;
+  top: 20px;            /* Adjusted from 10px to 20px for alignment */
+  right: 20px;          /* Adjusted from 10px to 20px */
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+#home-button:hover {
+  transform: scale(1.2);
+}
+#home-button .home-icon {
+  width: 32px;          /* Increased size */
+  height: 32px;
 }
 
 /* Sidebar Menu - Fixed Sliding Sidebar */
@@ -213,23 +232,28 @@ body.dark-mode .feature-box {
   box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
 
-/* CONVERSION OPTIONS container */
-.convert-controls {
+/* CONVERSION SECTION (for CONVERT mode) */
+#conversion-section {
   display: none;
-  margin-top: 10px;
-  justify-content: center;
-  gap: 10px;
+  margin-top: 20px;
 }
 
-/* Make conversion option buttons smaller and update color */
+/* CONVERSION OPTIONS container */
+.convert-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
 .convert-controls button,
 .more-convert-options button {
-  padding: 6px 10px;
-  background: #2575fc;
+  padding: 10px 16px;
+  background: #009688;
   color: #fff;
   border: none;
-  border-radius: 4px;
-  font-size: 10px;
+  border-radius: 6px;
+  font-size: 14px;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -416,7 +440,6 @@ body.dark-mode input {
   transition: transform 0.5s ease;
 }
 
-/* In dark mode, force the dark mode icon to be white */
 body.dark-mode #mode-toggle svg {
   color: #fff;
 }
