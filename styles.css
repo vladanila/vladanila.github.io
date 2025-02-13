@@ -74,8 +74,8 @@ body.dark-mode #menu-icon .bar {
 /* Home Button in Sidebar */
 #home-button {
   position: absolute;
-  top: 20px;            /* Adjusted from 10px to 20px for alignment */
-  right: 20px;          /* Adjusted from 10px to 20px */
+  top: 20px;
+  right: 20px;
   cursor: pointer;
   transition: transform 0.3s ease;
 }
@@ -83,7 +83,7 @@ body.dark-mode #menu-icon .bar {
   transform: scale(1.2);
 }
 #home-button .home-icon {
-  width: 32px;          /* Increased size */
+  width: 32px;
   height: 32px;
 }
 
@@ -238,7 +238,6 @@ body.dark-mode .feature-box {
   margin-top: 20px;
 }
 
-/* CONVERSION OPTIONS container */
 .convert-controls {
   display: flex;
   justify-content: center;
@@ -264,7 +263,6 @@ body.dark-mode .feature-box {
   box-shadow: 0 3px 10px rgba(0,0,0,0.15);
 }
 
-/* More Convert Options dropdown (initially hidden) */
 .more-convert-options {
   display: none;
   margin-top: 5px;
@@ -272,7 +270,84 @@ body.dark-mode .feature-box {
   gap: 10px;
 }
 
-/* Resize Options */
+/* FILTER SECTION */
+#filter-section {
+  display: none;
+  margin-top: 20px;
+}
+
+.filter-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.filter-controls button {
+  padding: 10px 16px;
+  background: #8e44ad;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.filter-controls button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+/* WATERMARK SECTION */
+#watermark-section {
+  display: none;
+  margin-top: 20px;
+}
+
+#watermark-section input {
+  padding: 10px;
+  margin-right: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* COLLAGE SECTION */
+#collage-section {
+  display: none;
+  margin-top: 20px;
+}
+
+.collage-upload-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* BORDER SECTION */
+#border-section {
+  display: none;
+  margin-top: 20px;
+}
+
+#border-section input[type="number"] {
+  padding: 10px;
+  margin-right: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+#border-section input[type="color"] {
+  padding: 0;
+  margin-right: 10px;
+  border: none;
+}
+
+/* RESIZE OPTIONS */
 #resize-options {
   margin: 20px 0;
 }
@@ -344,7 +419,7 @@ body.dark-mode .feature-box {
   touch-action: none;
 }
 
-/* Cropper Controls (for crop mode) */
+/* Cropper Controls */
 .cropper-controls {
   display: none;
   flex: 0 0 35%;
@@ -423,7 +498,7 @@ body.dark-mode input {
   border: 1px solid #555;
 }
 
-/* Dark Mode Toggle Button - Fixed in Upper Right */
+/* Dark Mode Toggle Button */
 #mode-toggle {
   position: fixed;
   top: 20px;
