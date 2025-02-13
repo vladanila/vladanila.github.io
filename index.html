@@ -40,11 +40,11 @@
       </svg>
     </div>
     <button onclick="switchToCropMode()">Crop Image</button>
-    <button onclick="alert('Filter Effects feature coming soon!')">Filter Effects</button>
+    <button onclick="switchToFilterMode()">Filter Effects</button>
     <button onclick="switchToConvertMode()">Convert Image</button>
-    <button onclick="alert('Watermark feature coming soon!')">Watermark</button>
-    <button onclick="alert('Make Collage feature coming soon!')">Make Collage</button>
-    <button onclick="alert('Add Border feature coming soon!')">Add Border</button>
+    <button onclick="switchToWatermarkMode()">Watermark</button>
+    <button onclick="switchToCollageMode()">Make Collage</button>
+    <button onclick="switchToBorderMode()">Add Border</button>
     <div id="project-credit">
       A project by <strong>Geetartha</strong>
       <div id="social-media">
@@ -81,7 +81,7 @@
       <!-- Dynamic Text -->
       <div id="modern-text">Resize your images here.</div>
       
-      <!-- UPLOAD SECTION for RESIZE/CROP/CONVERT modes -->
+      <!-- UPLOAD SECTION for RESIZE/CROP/CONVERT/FILTER/WATERMARK/COLLAGE/BORDER modes -->
       <div id="image-container">
         <label for="upload" class="upload-btn">Upload Image</label>
         <input type="file" id="upload" accept="image/*" hidden />
@@ -90,7 +90,6 @@
       
       <!-- CONVERSION SECTION (visible only in CONVERT mode) -->
       <div id="conversion-section" style="display:none; margin-top:20px;">
-        <!-- Conversion Options -->
         <div id="conversion-options" class="convert-controls">
           <button onclick="convertTo('jpeg')">.jpg</button>
           <button onclick="convertTo('png')">.png</button>
@@ -102,6 +101,47 @@
             <button onclick="convertTo('ico')">.ico</button>
           </div>
         </div>
+      </div>
+      
+      <!-- FILTER SECTION (visible only in FILTER mode) -->
+      <div id="filter-section" style="display:none; margin-top:20px;">
+        <div id="filter-options" class="filter-controls">
+          <button onclick="applyFilter('none')">None</button>
+          <button onclick="applyFilter('grayscale(100%)')">Grayscale</button>
+          <button onclick="applyFilter('sepia(100%)')">Sepia</button>
+          <button onclick="applyFilter('invert(100%)')">Invert</button>
+          <button onclick="applyFilter('blur(5px)')">Blur</button>
+          <button onclick="applyFilter('brightness(150%)')">Brightness</button>
+          <button onclick="applyFilter('contrast(150%)')">Contrast</button>
+        </div>
+      </div>
+      
+      <!-- WATERMARK SECTION (visible only in WATERMARK mode) -->
+      <div id="watermark-section" style="display:none; margin-top:20px;">
+        <input type="text" id="watermark-text" placeholder="Enter watermark text" />
+        <button onclick="applyWatermark()">Apply Watermark</button>
+      </div>
+      
+      <!-- COLLAGE SECTION (visible only in COLLAGE mode) -->
+      <div id="collage-section" style="display:none; margin-top:20px;">
+        <div class="collage-upload-container">
+          <label for="collage-upload-1" class="upload-btn">Upload Image 1</label>
+          <input type="file" id="collage-upload-1" accept="image/*" hidden />
+          <label for="collage-upload-2" class="upload-btn">Upload Image 2</label>
+          <input type="file" id="collage-upload-2" accept="image/*" hidden />
+          <label for="collage-upload-3" class="upload-btn">Upload Image 3</label>
+          <input type="file" id="collage-upload-3" accept="image/*" hidden />
+          <label for="collage-upload-4" class="upload-btn">Upload Image 4</label>
+          <input type="file" id="collage-upload-4" accept="image/*" hidden />
+        </div>
+        <button onclick="createCollage()">Create Collage</button>
+      </div>
+      
+      <!-- BORDER SECTION (visible only in BORDER mode) -->
+      <div id="border-section" style="display:none; margin-top:20px;">
+        <input type="number" id="border-thickness" placeholder="Border thickness (px)" />
+        <input type="color" id="border-color" value="#000000" />
+        <button onclick="applyBorder()">Apply Border</button>
       </div>
       
       <!-- RESIZE OPTIONS (visible in RESIZE mode) -->
@@ -131,10 +171,10 @@
         </div>
       </div>
       
-      <!-- Loading Spinner (shown during conversion) -->
+      <!-- Loading Spinner (shown during conversion/filters) -->
       <div id="loading-spinner" class="loading-spinner" style="display:none;"></div>
       
-      <!-- Ready Message (will display conversion success text above the download button) -->
+      <!-- Ready Message (displays success text above download button) -->
       <div id="ready-message" class="ready-message">
         Your photo is ready to be downloaded
       </div>
