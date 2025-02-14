@@ -12,8 +12,8 @@ let watermarkedImageURL = null;
 let collageImageURL = null;
 let borderedImageURL = null;
 let collageImages = [null, null, null, null];
-let watermarkPosition = "bottom-right"; // default position
-let watermarkFontSize = 30; // default size in px
+let watermarkPosition = "bottom-right";
+let watermarkFontSize = 30;
 
 // Home button: animate and refresh
 function goHome() {
@@ -156,7 +156,7 @@ function resizeImage() {
       currentCanvas = canvas;
       document.getElementById("preview-image").src = canvas.toDataURL();
       gsap.to("#preview-wrapper", { duration: 0.8, opacity: 1, ease: "power2.out" });
-      gsap.to("#ready-message", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.5 });
+      gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
     };
   };
   reader.readAsDataURL(file);
@@ -168,7 +168,7 @@ function closeSidebarIfOpen() {
   if (sidebar.style.left === "0px") toggleMenu();
 }
 
-/* Show original upload button (for non-collage modes) */
+/* Helper: Show upload button (for non-collage modes) */
 function showUploadButton() {
   document.getElementById("image-container").style.display = "block";
 }
@@ -241,7 +241,7 @@ function switchToConvertMode() {
   if (originalImageURL) imgElement.src = originalImageURL;
 }
 
-// Filter Mode with slider
+// Filter Mode with Slider and Percentage Display
 function switchToFilterMode() {
   currentMode = "filter";
   showUploadButton();
@@ -267,10 +267,12 @@ function switchToFilterMode() {
     imgElement.style.filter = "none";
     currentFilterType = "none";
     document.getElementById("filter-slider-container").style.display = "none";
+    // Hide download button until a filter is chosen
+    gsap.to("#download-button", { duration: 0.4, opacity: 0 });
   }
 }
 
-// Watermark Mode with size and position controls
+// Watermark Mode with Size, Opacity & Position Controls
 function switchToWatermarkMode() {
   currentMode = "watermark";
   showUploadButton();
@@ -289,12 +291,15 @@ function switchToWatermarkMode() {
   if (originalImageURL) {
     imgElement.src = originalImageURL;
     imgElement.style.filter = "none";
+    // Hide download button until watermark is applied
+    gsap.to("#download-button", { duration: 0.4, opacity: 0 });
   }
 }
 
-// Collage Mode: hide original upload button
+// Collage Mode
 function switchToCollageMode() {
   currentMode = "collage";
+  // Hide the original upload image button
   document.getElementById("image-container").style.display = "none";
   document.getElementById("resize-options").style.display = "none";
   document.getElementById("cropper-controls").style.display = "none";
@@ -307,9 +312,10 @@ function switchToCollageMode() {
   document.getElementById("download-button").textContent = "Download Collage";
   collageImages = [null, null, null, null];
   closeSidebarIfOpen();
+  // The download button will appear after createCollage is clicked.
 }
 
-// Border Mode
+// Border Mode with Thickness Slider
 function switchToBorderMode() {
   currentMode = "border";
   showUploadButton();
@@ -328,10 +334,11 @@ function switchToBorderMode() {
   if (originalImageURL) {
     imgElement.src = originalImageURL;
     imgElement.style.filter = "none";
+    gsap.to("#download-button", { duration: 0.4, opacity: 0 });
   }
 }
 
-/* Filter: Select filter type and show slider if needed */
+/* Filter: Select filter type */
 function selectFilterType(filterType) {
   currentFilterType = filterType;
   if (filterType === "none") {
@@ -341,30 +348,38 @@ function selectFilterType(filterType) {
     document.getElementById("filter-slider-container").style.display = "block";
     updateFilter();
   }
+  // Show download button now that a filter is chosen
+  gsap.to("#download-button", { duration: 0.8, opacity: 1 });
 }
 
-/* Update filter based on slider */
+/* Update filter based on slider and update percentage label */
 function updateFilter() {
   const sliderVal = document.getElementById("filter-slider").value;
   const imgElement = document.getElementById("preview-image");
   let filterStr = "";
   if (currentFilterType === "none") {
     filterStr = "none";
+    document.getElementById("filter-percentage").textContent = "";
   } else if (currentFilterType === "grayscale" || currentFilterType === "sepia" || currentFilterType === "invert") {
     filterStr = currentFilterType + "(" + sliderVal + "%)";
+    document.getElementById("filter-percentage").textContent = sliderVal + "%";
   } else if (currentFilterType === "brightness" || currentFilterType === "contrast") {
-    filterStr = currentFilterType + "(" + (parseInt(sliderVal) + 50) + "%)";
+    let value = parseInt(sliderVal) + 50;
+    filterStr = currentFilterType + "(" + value + "%)";
+    document.getElementById("filter-percentage").textContent = value + "%";
   } else if (currentFilterType === "blur") {
-    filterStr = "blur(" + (sliderVal / 20).toFixed(2) + "px)";
+    let blurPx = (sliderVal / 20).toFixed(2);
+    filterStr = "blur(" + blurPx + "px)";
+    document.getElementById("filter-percentage").textContent = blurPx + "px";
   }
   currentFilter = filterStr;
   imgElement.style.filter = filterStr;
 }
 
-/* Event listener for filter slider */
+/* Listen for filter slider changes and update percentage */
 document.getElementById("filter-slider").addEventListener("input", updateFilter);
 
-/* Apply Watermark */
+/* Watermark: Apply watermark with size, opacity and position */
 function applyWatermark() {
   const watermarkText = document.getElementById("watermark-text").value;
   if (!originalImageURL) {
@@ -375,10 +390,11 @@ function applyWatermark() {
     alert("Please enter watermark text.");
     return;
   }
-  // Get watermark font size from slider
+  // Get size and opacity from sliders
   const size = parseInt(document.getElementById("watermark-size-slider").value);
   watermarkFontSize = size;
-  // Determine watermark position based on global variable
+  const opacityVal = parseInt(document.getElementById("watermark-opacity-slider").value);
+  const opacityDecimal = opacityVal / 100;
   const img = new Image();
   img.onload = function() {
     const canvas = document.createElement("canvas");
@@ -387,386 +403,7 @@ function applyWatermark() {
     const ctx = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0);
     ctx.font = watermarkFontSize + "px Poppins";
-    ctx.fillStyle = "rgba(255,255,255,0.5)";
-    
-    // Set text alignment and position based on watermarkPosition
-    let x, y;
-    switch(watermarkPosition) {
-      case "top-left":
-        ctx.textAlign = "left";
-        ctx.textBaseline = "top";
-        x = 10;
-        y = 10;
-        break;
-      case "top-right":
-        ctx.textAlign = "right";
-        ctx.textBaseline = "top";
-        x = canvas.width - 10;
-        y = 10;
-        break;
-      case "bottom-left":
-        ctx.textAlign = "left";
-        ctx.textBaseline = "bottom";
-        x = 10;
-        y = canvas.height - 10;
-        break;
-      case "center":
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        x = canvas.width / 2;
-        y = canvas.height / 2;
-        break;
-      case "bottom-right":
-      default:
-        ctx.textAlign = "right";
-        ctx.textBaseline = "bottom";
-        x = canvas.width - 10;
-        y = canvas.height - 10;
-        break;
-    }
-    ctx.fillText(watermarkText, x, y);
-    watermarkedImageURL = canvas.toDataURL("image/png");
-    document.getElementById("preview-image").src = watermarkedImageURL;
-    gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
-    gsap.to("#ready-message", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.5 });
-    document.getElementById("ready-message").textContent = "Watermark applied successfully!";
-  };
-  img.src = originalImageURL;
-}
-
-/* Update watermark size label */
-document.getElementById("watermark-size-slider").addEventListener("input", function() {
-  const size = this.value;
-  document.getElementById("watermark-size-label").textContent = size + "px";
-});
-
-/* Set watermark position */
-function setWatermarkPosition(pos) {
-  watermarkPosition = pos;
-}
-
-/* Collage: add event listeners for each collage upload */
-for (let i = 1; i <= 4; i++) {
-  document.getElementById("collage-upload-" + i).addEventListener("change", function (event) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        collageImages[i - 1] = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-}
-
-/* Create Collage */
-function createCollage() {
-  for (let i = 0; i < 4; i++) {
-    if (!collageImages[i]) {
-      alert("Please upload 4 images for the collage.");
-      return;
-    }
-  }
-  const canvas = document.createElement("canvas");
-  const cellSize = 200;
-  canvas.width = cellSize * 2;
-  canvas.height = cellSize * 2;
-  const ctx = canvas.getContext("2d");
-  const positions = [
-    { x: 0, y: 0 },
-    { x: cellSize, y: 0 },
-    { x: 0, y: cellSize },
-    { x: cellSize, y: cellSize }
-  ];
-  let imagesLoaded = 0;
-  for (let i = 0; i < 4; i++) {
-    let img = new Image();
-    img.onload = function() {
-      ctx.drawImage(img, positions[i].x, positions[i].y, cellSize, cellSize);
-      imagesLoaded++;
-      if (imagesLoaded === 4) {
-        collageImageURL = canvas.toDataURL("image/png");
-        document.getElementById("preview-image").src = collageImageURL;
-        gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
-        gsap.to("#ready-message", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.5 });
-        document.getElementById("ready-message").textContent = "Collage created successfully!";
-      }
-    };
-    img.src = collageImages[i];
-  }
-}
-
-/* Apply Border */
-function applyBorder() {
-  if (!originalImageURL) {
-    alert("Please upload an image first.");
-    return;
-  }
-  const thickness = parseInt(document.getElementById("border-thickness").value);
-  if (isNaN(thickness) || thickness <= 0) {
-    alert("Please enter a valid border thickness.");
-    return;
-  }
-  const borderColor = document.getElementById("border-color").value;
-  const img = new Image();
-  img.onload = function() {
-    const canvas = document.createElement("canvas");
-    canvas.width = img.naturalWidth + 2 * thickness;
-    canvas.height = img.naturalHeight + 2 * thickness;
-    const ctx = canvas.getContext("2d");
-    ctx.fillStyle = borderColor;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, thickness, thickness);
-    borderedImageURL = canvas.toDataURL("image/png");
-    document.getElementById("preview-image").src = borderedImageURL;
-    gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
-    gsap.to("#ready-message", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.5 });
-    document.getElementById("ready-message").textContent = "Border applied successfully!";
-  };
-  img.src = originalImageURL;
-}
-
-/* Toggle More Conversion Options */
-function toggleMoreOptions() {
-  const moreOptions = document.getElementById("more-convert-options");
-  if (moreOptions.style.display === "flex") {
-    gsap.to(moreOptions, {
-      duration: 0.5,
-      x: -50,
-      opacity: 0,
-      onComplete: function() {
-        moreOptions.style.display = "none";
-        moreOptions.style.transform = "none";
-      }
-    });
-  } else {
-    moreOptions.style.display = "flex";
-    gsap.fromTo(moreOptions, { x: -50, opacity: 0 }, { duration: 0.5, x: 0, opacity: 1 });
-  }
-}
-
-/* Convert Image */
-function convertTo(targetType) {
-  if (!originalImageURL) {
-    alert("Please upload an image first.");
-    return;
-  }
-  const img = new Image();
-  img.onload = function() {
-    const canvas = document.createElement("canvas");
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0);
-    let mimeType;
-    if (targetType === "jpeg") mimeType = "image/jpeg";
-    else if (targetType === "png") mimeType = "image/png";
-    else if (targetType === "webp") mimeType = "image/webp";
-    else if (targetType === "gif") mimeType = "image/gif";
-    else if (targetType === "bmp") mimeType = "image/bmp";
-    else if (targetType === "ico") mimeType = "image/x-icon";
-    else mimeType = "image/png";
-    const dataURL = canvas.toDataURL(mimeType);
-    convertedFileType = targetType;
-    document.getElementById("loading-spinner").style.display = "block";
-    const readyMsg = document.getElementById("ready-message");
-    readyMsg.textContent = "Processing conversion...";
-    setTimeout(function() {
-      document.getElementById("loading-spinner").style.display = "none";
-      document.getElementById("preview-image").src = dataURL;
-      let ext = (targetType === "jpeg") ? ".jpg" : "." + targetType;
-      readyMsg.textContent = "Your image is successfully converted to " + ext + " and is ready to be downloaded.";
-      convertedImageURL = dataURL;
-      gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
-      gsap.to("#ready-message", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.5 });
-    }, 2000);
-  };
-  img.src = originalImageURL;
-}
-
-/* Cropper Actions */
-function cropperAction(action, param) {
-  if (!cropperInstance) {
-    alert("Cropper is not initialized.");
-    return;
-  }
-  if (action === "rotate") cropperInstance.rotate(param);
-  else if (action === "zoom") cropperInstance.zoom(param);
-  else if (action === "reset") cropperInstance.reset();
-}
-
-/* Set Crop Aspect Ratio */
-function setAspectRatio(ratio) {
-  if (!cropperInstance) {
-    alert("Cropper is not initialized.");
-    return;
-  }
-  cropperInstance.setAspectRatio(ratio);
-}
-
-/* Download Image based on mode */
-function downloadImage() {
-  if (currentMode === "crop") {
-    if (!cropperInstance) {
-      alert("Please crop your image first.");
-      return;
-    }
-    const croppedCanvas = cropperInstance.getCroppedCanvas();
-    if (!croppedCanvas) {
-      alert("Crop your image first.");
-      return;
-    }
-    const link = document.createElement("a");
-    link.href = croppedCanvas.toDataURL("image/png");
-    link.download = "cropped-image.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
-  } else if (currentMode === "convert") {
-    if (!convertedImageURL) {
-      alert("Please convert the image first.");
-      return;
-    }
-    const link = document.createElement("a");
-    link.href = convertedImageURL;
-    let ext = (convertedFileType === "jpeg") ? "jpg" : convertedFileType;
-    link.download = "converted-image." + ext;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
-  } else if (currentMode === "filter") {
-    if (!originalImageURL) {
-      alert("Please upload an image first.");
-      return;
-    }
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = function() {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
-      const ctx = canvas.getContext("2d");
-      ctx.filter = currentFilter;
-      ctx.drawImage(img, 0, 0);
-      const dataURL = canvas.toDataURL("image/png");
-      const link = document.createElement("a");
-      link.href = dataURL;
-      link.download = "filtered-image.png";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
-    };
-    img.src = originalImageURL;
-  } else if (currentMode === "watermark") {
-    if (!watermarkedImageURL) {
-      alert("Please apply watermark first.");
-      return;
-    }
-    const link = document.createElement("a");
-    link.href = watermarkedImageURL;
-    link.download = "watermarked-image.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
-  } else if (currentMode === "collage") {
-    if (!collageImageURL) {
-      alert("Please create a collage first.");
-      return;
-    }
-    const link = document.createElement("a");
-    link.href = collageImageURL;
-    link.download = "collage-image.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
-  } else if (currentMode === "border") {
-    if (!borderedImageURL) {
-      alert("Please apply border first.");
-      return;
-    }
-    const link = document.createElement("a");
-    link.href = borderedImageURL;
-    link.download = "bordered-image.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
-  } else {
-    // Resize mode
-    if (!currentCanvas) {
-      alert("Please resize an image first.");
-      return;
-    }
-    const link = document.createElement("a");
-    link.href = currentCanvas.toDataURL("image/png");
-    link.download = "resized-image.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
-  }
-}
-
-/* Filter: When a filter button is clicked */
-function selectFilterType(filterType) {
-  currentFilterType = filterType;
-  if (filterType === "none") {
-    document.getElementById("filter-slider-container").style.display = "none";
-    updateFilter();
-  } else {
-    document.getElementById("filter-slider-container").style.display = "block";
-    updateFilter();
-  }
-}
-
-/* Update filter based on slider */
-function updateFilter() {
-  const sliderVal = document.getElementById("filter-slider").value;
-  const imgElement = document.getElementById("preview-image");
-  let filterStr = "";
-  if (currentFilterType === "none") {
-    filterStr = "none";
-  } else if (currentFilterType === "grayscale" || currentFilterType === "sepia" || currentFilterType === "invert") {
-    filterStr = currentFilterType + "(" + sliderVal + "%)";
-  } else if (currentFilterType === "brightness" || currentFilterType === "contrast") {
-    filterStr = currentFilterType + "(" + (parseInt(sliderVal) + 50) + "%)";
-  } else if (currentFilterType === "blur") {
-    filterStr = "blur(" + (sliderVal / 20).toFixed(2) + "px)";
-  }
-  currentFilter = filterStr;
-  imgElement.style.filter = filterStr;
-}
-
-/* Listen for filter slider changes */
-document.getElementById("filter-slider").addEventListener("input", updateFilter);
-
-/* Watermark: Apply watermark with custom size and position */
-function applyWatermark() {
-  const watermarkText = document.getElementById("watermark-text").value;
-  if (!originalImageURL) {
-    alert("Please upload an image first.");
-    return;
-  }
-  if (!watermarkText) {
-    alert("Please enter watermark text.");
-    return;
-  }
-  const size = parseInt(document.getElementById("watermark-size-slider").value);
-  watermarkFontSize = size;
-  const img = new Image();
-  img.onload = function() {
-    const canvas = document.createElement("canvas");
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0);
-    ctx.font = watermarkFontSize + "px Poppins";
-    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.fillStyle = "rgba(255,255,255," + opacityDecimal + ")";
     
     let x, y;
     switch(watermarkPosition) {
@@ -811,15 +448,27 @@ function applyWatermark() {
   };
   img.src = originalImageURL;
 }
-
-/* Update watermark size label */
+/* Reapply watermark in realtime when size or opacity changes */
 document.getElementById("watermark-size-slider").addEventListener("input", function() {
   document.getElementById("watermark-size-label").textContent = this.value + "px";
+  if(document.getElementById("watermark-text").value) {
+    applyWatermark();
+  }
+});
+document.getElementById("watermark-opacity-slider").addEventListener("input", function() {
+  document.getElementById("watermark-opacity-label").textContent = this.value + "%";
+  if(document.getElementById("watermark-text").value) {
+    applyWatermark();
+  }
 });
 
 /* Set watermark position */
 function setWatermarkPosition(pos) {
   watermarkPosition = pos;
+  // Optionally reapply watermark if text exists
+  if(document.getElementById("watermark-text").value) {
+    applyWatermark();
+  }
 }
 
 /* Collage: Set event listeners for each collage upload */
@@ -873,17 +522,13 @@ function createCollage() {
   }
 }
 
-/* Apply Border */
+/* Apply Border using slider value */
 function applyBorder() {
   if (!originalImageURL) {
     alert("Please upload an image first.");
     return;
   }
-  const thickness = parseInt(document.getElementById("border-thickness").value);
-  if (isNaN(thickness) || thickness <= 0) {
-    alert("Please enter a valid border thickness.");
-    return;
-  }
+  const thickness = parseInt(document.getElementById("border-thickness-slider").value);
   const borderColor = document.getElementById("border-color").value;
   const img = new Image();
   img.onload = function() {
@@ -903,22 +548,13 @@ function applyBorder() {
   img.src = originalImageURL;
 }
 
-/* Toggle More Conversion Options */
+/* Toggle More Conversion Options without animations */
 function toggleMoreOptions() {
   const moreOptions = document.getElementById("more-convert-options");
   if (moreOptions.style.display === "flex") {
-    gsap.to(moreOptions, {
-      duration: 0.5,
-      x: -50,
-      opacity: 0,
-      onComplete: function() {
-        moreOptions.style.display = "none";
-        moreOptions.style.transform = "none";
-      }
-    });
+    moreOptions.style.display = "none";
   } else {
     moreOptions.style.display = "flex";
-    gsap.fromTo(moreOptions, { x: -50, opacity: 0 }, { duration: 0.5, x: 0, opacity: 1 });
   }
 }
 
@@ -981,7 +617,7 @@ function setAspectRatio(ratio) {
   cropperInstance.setAspectRatio(ratio);
 }
 
-/* Download Image based on mode */
+/* Download Image based on Mode */
 function downloadImage() {
   if (currentMode === "crop") {
     if (!cropperInstance) {
