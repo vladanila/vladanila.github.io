@@ -25,7 +25,7 @@ body.dark-mode {
   cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><circle cx='8' cy='8' r='4' stroke='white' stroke-width='2' fill='none'/></svg>") 8 8, auto;
 }
 
-/* Buttons use same font */
+/* Ensure all buttons use the same font */
 button {
   font-family: 'Poppins', sans-serif;
 }
@@ -140,7 +140,6 @@ body.dark-mode #project-credit {
   color: #2575fc;
   transition: transform 0.3s ease;
 }
-/* Adjust GitHub icon size to match the others */
 .social-icon.github {
   width: 22px;
   height: 22px;
@@ -153,7 +152,7 @@ body.dark-mode #project-credit {
   transform: scale(1.1);
 }
 
-/* Welcome Heading */
+/* Welcome Heading with Gradient on "Imagist" */
 #welcome-heading {
   font-size: 2.8em;
   font-weight: 600;
@@ -165,8 +164,9 @@ body.dark-mode #project-credit {
   z-index: 100;
 }
 .underline {
-  text-decoration: underline;
-  color: #2575fc;
+  background: linear-gradient(90deg, #e33e99, #d00009);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Feature Container and Box */
@@ -252,8 +252,7 @@ body.dark-mode .feature-box {
 .more-convert-options {
   display: none;
   margin-top: 5px;
-  justify-content: center;
-  gap: 10px;
+  /* No GSAP animation here now */
 }
 
 /* FILTER SECTION */
@@ -285,6 +284,13 @@ body.dark-mode .feature-box {
   margin-top: 10px;
   display: none;
 }
+#filter-slider-container input[type="range"] {
+  vertical-align: middle;
+}
+#filter-percentage {
+  font-size: 14px;
+  margin-left: 5px;
+}
 
 /* WATERMARK SECTION */
 #watermark-section {
@@ -298,10 +304,12 @@ body.dark-mode .feature-box {
   font-size: 14px;
   margin-right: 10px;
 }
-#watermark-section input[type="range"] {
+#watermark-size-slider,
+#watermark-opacity-slider {
   vertical-align: middle;
 }
-#watermark-size-label {
+#watermark-size-label,
+#watermark-opacity-label {
   font-size: 14px;
   margin-left: 5px;
 }
@@ -330,17 +338,12 @@ body.dark-mode .feature-box {
   display: none;
   margin-top: 20px;
 }
-#border-section input[type="number"] {
-  padding: 10px;
-  margin-right: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
+#border-thickness-slider {
+  vertical-align: middle;
 }
-#border-section input[type="color"] {
-  padding: 0;
-  margin-right: 10px;
-  border: none;
+#border-thickness-label {
+  font-size: 14px;
+  margin-left: 5px;
 }
 
 /* RESIZE OPTIONS */
@@ -430,7 +433,7 @@ body.dark-mode .feature-box {
   box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
 
-/* Action Buttons (for Collage, Watermark, Border) */
+/* Action Buttons (Collage, Watermark, Border) */
 .action-btn {
   padding: 12px 25px;
   background: #2575fc;
@@ -470,7 +473,7 @@ body.dark-mode .feature-box {
   transition: opacity 0.8s ease-in-out;
 }
 
-/* Download Button */
+/* Download Button (hidden by default) */
 .download-btn {
   background: #e74c3c;
   color: #fff;
@@ -480,7 +483,7 @@ body.dark-mode .feature-box {
   font-size: 16px;
   cursor: pointer;
   margin-top: 15px;
-  opacity: 0;
+  opacity: 0; /* hidden until processing is done */
   transition: opacity 0.8s ease-in-out, transform 0.3s ease;
 }
 .download-btn:hover {
@@ -490,11 +493,13 @@ body.dark-mode .feature-box {
 .download-btn:active {
   transform: scale(0.98);
 }
+
 body.dark-mode input {
   background: #3a3a50;
   color: #f0f0f0;
   border: 1px solid #555;
 }
+
 #mode-toggle {
   position: fixed;
   top: 20px;
