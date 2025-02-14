@@ -70,7 +70,7 @@
     </div>
   </div>
 
-  <!-- Welcome Heading -->
+  <!-- Welcome Heading with Gradient on "Imagist" -->
   <h1 id="welcome-heading" class="animate__animated animate__fadeInDown">
     Welcome to <span class="underline">Imagist</span>
   </h1>
@@ -94,16 +94,16 @@
           <button onclick="convertTo('jpeg')">.jpg</button>
           <button onclick="convertTo('png')">.png</button>
           <button onclick="convertTo('webp')">.webp</button>
-          <button onclick="toggleMoreOptions()">More</button>
-          <div id="more-convert-options" class="more-convert-options">
+          <div id="more-convert-options" class="more-convert-options" style="display:none;">
             <button onclick="convertTo('gif')">.gif</button>
             <button onclick="convertTo('bmp')">.bmp</button>
             <button onclick="convertTo('ico')">.ico</button>
           </div>
+          <button onclick="toggleMoreOptions()">More</button>
         </div>
       </div>
       
-      <!-- FILTER SECTION with Intensity Slider -->
+      <!-- FILTER SECTION with Slider and Percentage Display -->
       <div id="filter-section" style="display:none; margin-top:20px;">
         <div id="filter-options" class="filter-controls">
           <button onclick="selectFilterType('none')">None</button>
@@ -116,10 +116,11 @@
         </div>
         <div id="filter-slider-container" style="margin-top:10px; display:none;">
           <input type="range" id="filter-slider" min="0" max="100" value="100" />
+          <span id="filter-percentage">100%</span>
         </div>
       </div>
       
-      <!-- WATERMARK SECTION with Size and Position Controls -->
+      <!-- WATERMARK SECTION with Size and Opacity Controls and Position Buttons -->
       <div id="watermark-section" style="display:none; margin-top:20px;">
         <input type="text" id="watermark-text" placeholder="Enter watermark text" />
         <button class="action-btn" onclick="applyWatermark()">Apply Watermark</button>
@@ -127,6 +128,11 @@
           <label for="watermark-size-slider">Size:</label>
           <input type="range" id="watermark-size-slider" min="10" max="100" value="30" />
           <span id="watermark-size-label">30px</span>
+        </div>
+        <div style="margin-top:10px;">
+          <label for="watermark-opacity-slider">Opacity:</label>
+          <input type="range" id="watermark-opacity-slider" min="0" max="100" value="50" />
+          <span id="watermark-opacity-label">50%</span>
         </div>
         <div id="watermark-position-controls" style="margin-top:10px;">
           <button class="action-btn" onclick="setWatermarkPosition('bottom-right')">Bottom Right</button>
@@ -137,7 +143,7 @@
         </div>
       </div>
       
-      <!-- COLLAGE SECTION (hides the original upload button) -->
+      <!-- COLLAGE SECTION (hides original upload button) -->
       <div id="collage-section" style="display:none; margin-top:20px;">
         <div class="collage-upload-container">
           <label for="collage-upload-1" class="upload-btn">Upload Image 1</label>
@@ -152,10 +158,12 @@
         <button class="action-btn" onclick="createCollage()">Create Collage</button>
       </div>
       
-      <!-- BORDER SECTION -->
+      <!-- BORDER SECTION with Thickness Slider -->
       <div id="border-section" style="display:none; margin-top:20px;">
-        <input type="number" id="border-thickness" placeholder="Border thickness (px)" />
-        <input type="color" id="border-color" value="#000000" />
+        <label for="border-thickness-slider">Thickness:</label>
+        <input type="range" id="border-thickness-slider" min="1" max="50" value="5" />
+        <span id="border-thickness-label">5px</span>
+        <input type="color" id="border-color" value="#000000" style="vertical-align: middle; margin-left:10px;"/>
         <button class="action-btn" onclick="applyBorder()">Apply Border</button>
       </div>
       
@@ -194,15 +202,14 @@
         Your photo is ready to be downloaded
       </div>
       
-      <!-- Download Button -->
+      <!-- Download Button (initially hidden) -->
       <button id="download-button" class="download-btn" onclick="downloadImage()">Download</button>
     </div>
   </div>
 
   <!-- Dark Mode Toggle Button -->
   <button id="mode-toggle" onclick="toggleMode()">
-    <svg id="mode-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
-         xmlns="http://www.w3.org/2000/svg">
+    <svg id="mode-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
       <path d="M21 12.79A9 9 0 0112.21 3 7.5 7.5 0 0012 21a9 9 0 009-8.21z"/>
     </svg>
   </button>
