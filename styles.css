@@ -25,12 +25,12 @@ body.dark-mode {
   cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><circle cx='8' cy='8' r='4' stroke='white' stroke-width='2' fill='none'/></svg>") 8 8, auto;
 }
 
-/* Ensure all buttons use the same font */
+/* Buttons use same font */
 button {
   font-family: 'Poppins', sans-serif;
 }
 
-/* Hamburger Menu Icon - Fixed in Upper Left */
+/* Hamburger Menu Icon */
 #menu-icon {
   position: fixed;
   top: 20px;
@@ -44,11 +44,9 @@ button {
   justify-content: space-between;
   transition: transform 0.3s ease;
 }
-
 #menu-icon:hover {
   transform: scale(1.1);
 }
-
 #menu-icon .bar {
   height: 3px;
   width: 100%;
@@ -56,11 +54,9 @@ button {
   border-radius: 4px;
   transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 body.dark-mode #menu-icon .bar {
   background-color: #f0f0f0;
 }
-
 #menu-icon.open .bar:nth-child(1) {
   transform: translateY(10px) rotate(45deg);
 }
@@ -71,7 +67,7 @@ body.dark-mode #menu-icon .bar {
   transform: translateY(-10px) rotate(-45deg);
 }
 
-/* Home Button in Sidebar */
+/* Home Button */
 #home-button {
   position: absolute;
   top: 20px;
@@ -87,7 +83,7 @@ body.dark-mode #menu-icon .bar {
   height: 32px;
 }
 
-/* Sidebar Menu - Fixed Sliding Sidebar */
+/* Sidebar Menu */
 .sidebar {
   position: fixed;
   top: 0;
@@ -103,11 +99,9 @@ body.dark-mode #menu-icon .bar {
   flex-direction: column;
   align-items: center;
 }
-
 body.dark-mode .sidebar {
   background: linear-gradient(145deg, #2a2a3c, #1e1e2f);
 }
-
 .sidebar button {
   width: 80%;
   padding: 12px;
@@ -120,19 +114,16 @@ body.dark-mode .sidebar {
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
 .sidebar button:hover {
   transform: translateY(-3px);
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
-
 #project-credit {
   margin-top: auto;
   margin-bottom: 20px;
   font-size: 12px;
   color: #666;
 }
-
 body.dark-mode #project-credit {
   color: #aaa;
 }
@@ -144,18 +135,25 @@ body.dark-mode #project-credit {
   justify-content: center;
   gap: 15px;
 }
-
 #social-media a {
   display: inline-block;
   color: #2575fc;
   transition: transform 0.3s ease;
 }
-
+/* Adjust GitHub icon size to match the others */
+.social-icon.github {
+  width: 22px;
+  height: 22px;
+}
+.social-icon.twitter {
+  position: relative;
+  top: 2px;
+}
 #social-media a:hover {
   transform: scale(1.1);
 }
 
-/* Welcome Heading - Sticky at the Top */
+/* Welcome Heading */
 #welcome-heading {
   font-size: 2.8em;
   font-weight: 600;
@@ -166,20 +164,17 @@ body.dark-mode #project-credit {
   background: transparent;
   z-index: 100;
 }
-
 .underline {
   text-decoration: underline;
   color: #2575fc;
 }
 
-/* Feature Container */
+/* Feature Container and Box */
 #feature-container {
   max-width: 900px;
   margin: 40px auto;
   padding: 20px;
 }
-
-/* Feature Box */
 .feature-box {
   background: #ffffff;
   border-radius: 20px;
@@ -188,12 +183,10 @@ body.dark-mode #project-credit {
   box-shadow: 0px 8px 20px rgba(0,0,0,0.05);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
-
 .feature-box:hover {
   transform: translateY(-5px);
   box-shadow: 0px 12px 25px rgba(0,0,0,0.1);
 }
-
 body.dark-mode .feature-box {
   background: #2a2a3c;
   box-shadow: 0px 8px 20px rgba(0,0,0,0.3);
@@ -209,13 +202,11 @@ body.dark-mode .feature-box {
 #image-container {
   margin-bottom: 20px;
 }
-
 .file-name {
   margin-left: 10px;
   font-size: 1.1em;
   color: #2575fc;
 }
-
 .upload-btn {
   background: #ff512f;
   color: #fff;
@@ -226,25 +217,22 @@ body.dark-mode .feature-box {
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 .upload-btn:hover {
   transform: translateY(-3px);
   box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
 
-/* CONVERSION SECTION (for CONVERT mode) */
+/* CONVERSION SECTION */
 #conversion-section {
   display: none;
   margin-top: 20px;
 }
-
 .convert-controls {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-top: 10px;
 }
-
 .convert-controls button,
 .more-convert-options button {
   padding: 10px 16px;
@@ -256,13 +244,11 @@ body.dark-mode .feature-box {
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 .convert-controls button:hover,
 .more-convert-options button:hover {
   transform: translateY(-2px);
   box-shadow: 0 3px 10px rgba(0,0,0,0.15);
 }
-
 .more-convert-options {
   display: none;
   margin-top: 5px;
@@ -275,14 +261,12 @@ body.dark-mode .feature-box {
   display: none;
   margin-top: 20px;
 }
-
 .filter-controls {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-top: 10px;
 }
-
 .filter-controls button {
   padding: 10px 16px;
   background: #8e44ad;
@@ -293,10 +277,13 @@ body.dark-mode .feature-box {
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 .filter-controls button:hover {
   transform: translateY(-2px);
   box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+#filter-slider-container {
+  margin-top: 10px;
+  display: none;
 }
 
 /* WATERMARK SECTION */
@@ -304,13 +291,25 @@ body.dark-mode .feature-box {
   display: none;
   margin-top: 20px;
 }
-
-#watermark-section input {
+#watermark-section input[type="text"] {
   padding: 10px;
-  margin-right: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
   font-size: 14px;
+  margin-right: 10px;
+}
+#watermark-section input[type="range"] {
+  vertical-align: middle;
+}
+#watermark-size-label {
+  font-size: 14px;
+  margin-left: 5px;
+}
+#watermark-position-controls {
+  margin-top: 10px;
+}
+#watermark-position-controls button {
+  margin: 0 5px;
 }
 
 /* COLLAGE SECTION */
@@ -318,7 +317,6 @@ body.dark-mode .feature-box {
   display: none;
   margin-top: 20px;
 }
-
 .collage-upload-container {
   display: flex;
   flex-wrap: wrap;
@@ -332,7 +330,6 @@ body.dark-mode .feature-box {
   display: none;
   margin-top: 20px;
 }
-
 #border-section input[type="number"] {
   padding: 10px;
   margin-right: 10px;
@@ -340,7 +337,6 @@ body.dark-mode .feature-box {
   border: 1px solid #ccc;
   font-size: 14px;
 }
-
 #border-section input[type="color"] {
   padding: 0;
   margin-right: 10px;
@@ -351,7 +347,6 @@ body.dark-mode .feature-box {
 #resize-options {
   margin: 20px 0;
 }
-
 #resize-options input {
   padding: 12px;
   margin: 10px;
@@ -360,7 +355,6 @@ body.dark-mode .feature-box {
   width: 150px;
   font-size: 16px;
 }
-
 #resize-options button {
   padding: 12px 25px;
   background: #0072ff;
@@ -371,7 +365,6 @@ body.dark-mode .feature-box {
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 #resize-options button:hover {
   transform: translateY(-3px);
   box-shadow: 0 4px 15px rgba(0,0,0,0.15);
@@ -391,24 +384,18 @@ body.dark-mode .feature-box {
   opacity: 0;
   transition: opacity 0.8s ease-in-out;
 }
-
 .preview-wrapper.crop-mode {
   display: flex;
   justify-content: center;
   align-items: flex-start;
 }
-
-/* Preview Image Container */
 .image-preview-container {
   width: 100%;
 }
-
 .preview-wrapper.crop-mode #image-preview-container {
   flex: 0 0 60%;
   max-width: 60%;
 }
-
-/* Preview Image */
 #preview-image {
   max-width: 100%;
   max-height: 400px;
@@ -428,7 +415,6 @@ body.dark-mode .feature-box {
   flex-direction: column;
   gap: 8px;
 }
-
 .cropper-controls button {
   padding: 10px 20px;
   background: #0072ff;
@@ -439,10 +425,25 @@ body.dark-mode .feature-box {
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 .cropper-controls button:hover {
   transform: translateY(-3px);
   box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* Action Buttons (for Collage, Watermark, Border) */
+.action-btn {
+  padding: 12px 25px;
+  background: #2575fc;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 /* Loading Spinner */
@@ -482,23 +483,18 @@ body.dark-mode .feature-box {
   opacity: 0;
   transition: opacity 0.8s ease-in-out, transform 0.3s ease;
 }
-
 .download-btn:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
-
 .download-btn:active {
   transform: scale(0.98);
 }
-
 body.dark-mode input {
   background: #3a3a50;
   color: #f0f0f0;
   border: 1px solid #555;
 }
-
-/* Dark Mode Toggle Button */
 #mode-toggle {
   position: fixed;
   top: 20px;
@@ -508,13 +504,11 @@ body.dark-mode input {
   cursor: pointer;
   z-index: 1100;
 }
-
 #mode-toggle svg {
   width: 32px;
   height: 32px;
   transition: transform 0.5s ease;
 }
-
 body.dark-mode #mode-toggle svg {
   color: #fff;
 }
