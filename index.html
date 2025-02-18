@@ -22,6 +22,9 @@
 
   <!-- Cropper.js CSS (for crop mode) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+
+  <!-- New Stylesheet -->
+  <link rel="stylesheet" href="new-styles.css">
 </head>
 <body class="light-mode">
   <!-- Hamburger Menu Icon -->
@@ -88,6 +91,11 @@
         <span id="file-name" class="file-name"></span>
       </div>
       
+      <!-- Drag and Drop Zone -->
+      <div id="drag-drop-zone" class="drag-drop-zone">
+        Drag & Drop Images Here
+      </div>
+
       <!-- CONVERSION SECTION -->
       <div id="conversion-section" style="display:none; margin-top:20px;">
         <div id="conversion-options" class="convert-controls">
@@ -120,9 +128,10 @@
         </div>
       </div>
       
-      <!-- WATERMARK SECTION with Size and Opacity Controls and Position Buttons -->
+      <!-- WATERMARK SECTION with Size, Opacity Controls and Position Buttons -->
       <div id="watermark-section" style="display:none; margin-top:20px;">
-        <input type="text" id="watermark-text" placeholder="Enter watermark text" />
+        <!-- The watermark text input now uses a new class to match the button style -->
+        <input type="text" id="watermark-text" class="watermark-input" placeholder="Enter watermark text" />
         <button class="action-btn" onclick="applyWatermark()">Apply Watermark</button>
         <div style="margin-top:10px;">
           <label for="watermark-size-slider">Size:</label>
@@ -141,6 +150,8 @@
           <button class="action-btn" onclick="setWatermarkPosition('top-right')">Top Right</button>
           <button class="action-btn" onclick="setWatermarkPosition('bottom-left')">Bottom Left</button>
         </div>
+        <input type="file" id="watermark-image" accept="image/*" hidden />
+        <label for="watermark-image" class="upload-btn">Upload Watermark Image</label>
       </div>
       
       <!-- COLLAGE SECTION (hides original upload button) -->
@@ -174,9 +185,23 @@
         <button id="resize-button" onclick="resizeImage()">Resize</button>
         <div id="tooltip" class="tooltip">Enter desired dimensions in pixels</div>
       </div>
+
+      <!-- Undo/Redo Buttons with Arrow Icons -->
+      <div id="undo-redo-controls">
+        <button id="undo-action">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M9.91 7.41L8.5 6l-6 6 6 6 1.41-1.41L5.83 12zM20 11H8v2h12v-2z"/>
+          </svg>
+        </button>
+        <button id="redo-action">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M14.09 16.59L15.5 18l6-6-6-6-1.41 1.41L18.17 12zM4 11h12v2H4v-2z"/>
+          </svg>
+        </button>
+      </div>
       
-      <!-- Preview & Processing Panel -->
-      <div id="preview-wrapper" class="preview-wrapper">
+      <!-- Preview & Processing Panel (hidden by default) -->
+      <div id="preview-wrapper" class="preview-wrapper" style="display: none;">
         <div id="image-preview-container" class="image-preview-container">
           <img id="preview-image" src="#" alt="Image Preview" />
         </div>
@@ -219,5 +244,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
   <!-- Main Script -->
   <script src="script.js"></script>
+  <!-- New Libraries -->
+  <script src="new-libraries.js"></script>
 </body>
 </html>
