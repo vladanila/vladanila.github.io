@@ -42,29 +42,15 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: transform 0.3s ease;
-}
-#menu-icon:hover {
-  transform: scale(1.1);
 }
 #menu-icon .bar {
   height: 3px;
   width: 100%;
   background-color: #333;
   border-radius: 4px;
-  transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 body.dark-mode #menu-icon .bar {
   background-color: #f0f0f0;
-}
-#menu-icon.open .bar:nth-child(1) {
-  transform: translateY(10px) rotate(45deg);
-}
-#menu-icon.open .bar:nth-child(2) {
-  opacity: 0;
-}
-#menu-icon.open .bar:nth-child(3) {
-  transform: translateY(-10px) rotate(-45deg);
 }
 
 /* Home Button */
@@ -73,10 +59,6 @@ body.dark-mode #menu-icon .bar {
   top: 20px;
   right: 20px;
   cursor: pointer;
-  transition: transform 0.3s ease;
-}
-#home-button:hover {
-  transform: scale(1.2);
 }
 #home-button .home-icon {
   width: 32px;
@@ -112,11 +94,6 @@ body.dark-mode .sidebar {
   border-radius: 8px;
   font-size: 15px;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.sidebar button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 #project-credit {
   margin-top: auto;
@@ -215,11 +192,28 @@ body.dark-mode .feature-box {
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .upload-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  filter: brightness(90%);
+}
+
+/* Drag and Drop Zone */
+.drag-drop-zone {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  margin: 20px 0;
+  text-align: center;
+  cursor: pointer;
+}
+.drag-drop-zone.dragover {
+  background: #e6e6e6;
+  border-color: #0072ff;
+}
+body.dark-mode .drag-drop-zone {
+  border-color: #555;
+}
+body.dark-mode .drag-drop-zone.dragover {
+  background: #3a3a50;
 }
 
 /* CONVERSION SECTION */
@@ -239,20 +233,17 @@ body.dark-mode .feature-box {
   background: #009688;
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 14px;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .convert-controls button:hover,
 .more-convert-options button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  filter: brightness(90%);
 }
 .more-convert-options {
   display: none;
   margin-top: 5px;
-  /* No GSAP animation here now */
 }
 
 /* FILTER SECTION */
@@ -271,14 +262,12 @@ body.dark-mode .feature-box {
   background: #8e44ad;
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 14px;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .filter-controls button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  filter: brightness(90%);
 }
 #filter-slider-container {
   margin-top: 10px;
@@ -297,13 +286,53 @@ body.dark-mode .feature-box {
   display: none;
   margin-top: 20px;
 }
-#watermark-section input[type="text"] {
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  margin-right: 10px;
+
+/* Style the watermark text input to match buttons */
+.watermark-input {
+  border: none;
+  border-radius: 9999px;
+  padding: 12px 25px;
+  background: #2575fc;
+  color: #fff;
+  font-size: 15px;
+  outline: none;
+  margin-bottom: 10px;
 }
+.watermark-input::placeholder {
+  color: #fff;
+}
+.watermark-input:focus {
+  filter: brightness(90%);
+}
+
+#watermark-section label[for="watermark-image"] {
+  display: block;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+#watermark-section .upload-btn {
+  width: 100%;
+}
+
+#watermark-text {
+  /* Already styled via the watermark-input class */
+}
+
+.action-btn {
+  padding: 12px 25px;
+  margin-top: 10px;
+  background: #2575fc;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+}
+.action-btn:hover {
+  filter: brightness(90%);
+}
+
 #watermark-size-slider,
 #watermark-opacity-slider {
   vertical-align: middle;
@@ -366,11 +395,26 @@ body.dark-mode .feature-box {
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 #resize-options button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  filter: brightness(90%);
+}
+
+/* Undo/Redo Buttons */
+#undo-redo-controls {
+  margin: 10px 0;
+}
+#undo-redo-controls button {
+  padding: 10px;
+  margin: 0 5px;
+  background: #0072ff;
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+}
+#undo-redo-controls button:hover {
+  filter: brightness(90%);
 }
 
 /* Tooltip */
@@ -426,27 +470,9 @@ body.dark-mode .feature-box {
   border-radius: 8px;
   font-size: 14px;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .cropper-controls button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-}
-
-/* Action Buttons (Collage, Watermark, Border) */
-.action-btn {
-  padding: 12px 25px;
-  background: #2575fc;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.action-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  filter: brightness(90%);
 }
 
 /* Loading Spinner */
@@ -479,27 +505,25 @@ body.dark-mode .feature-box {
   color: #fff;
   padding: 12px 25px;
   border: none;
-  border-radius: 8px;
+  border-radius: 9999px;
   font-size: 16px;
   cursor: pointer;
   margin-top: 15px;
-  opacity: 0; /* hidden until processing is done */
-  transition: opacity 0.8s ease-in-out, transform 0.3s ease;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
 }
 .download-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-}
-.download-btn:active {
-  transform: scale(0.98);
+  filter: brightness(90%);
 }
 
+/* Dark mode input styles */
 body.dark-mode input {
   background: #3a3a50;
   color: #f0f0f0;
   border: 1px solid #555;
 }
 
+/* Dark Mode Toggle Button */
 #mode-toggle {
   position: fixed;
   top: 20px;
@@ -512,8 +536,32 @@ body.dark-mode input {
 #mode-toggle svg {
   width: 32px;
   height: 32px;
-  transition: transform 0.5s ease;
+  transition: none;
 }
 body.dark-mode #mode-toggle svg {
   color: #fff;
+}
+
+/* Remove transitions from all buttons and enforce pill shape */
+button,
+.upload-btn,
+.action-btn,
+.sidebar button,
+#resize-options button,
+#undo-redo-controls button,
+.cropper-controls button,
+.download-btn,
+#home-button,
+#mode-toggle {
+  transition: none !important;
+}
+button,
+.upload-btn,
+.action-btn,
+.sidebar button,
+#resize-options button,
+#undo-redo-controls button,
+.cropper-controls button,
+.download-btn {
+  border-radius: 9999px !important;
 }
