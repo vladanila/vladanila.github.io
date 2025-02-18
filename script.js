@@ -14,28 +14,23 @@ let borderedImageURL = null;
 let collageImages = [null, null, null, null];
 let watermarkPosition = "bottom-right";
 let watermarkFontSize = 30;
+let undoStack = [];
+let redoStack = [];
 
-// Home button: animate and refresh
+// Home button: simply reload without animation
 function goHome() {
-  gsap.to("#home-button", {
-    duration: 0.5,
-    scale: 1.2,
-    ease: "power1.inOut",
-    onComplete: function() {
-      window.location.reload();
-    }
-  });
+  window.location.reload();
 }
 
-/* Toggle sidebar menu */
+/* Toggle sidebar menu without animation */
 function toggleMenu() {
   const sidebar = document.getElementById("sidebar-menu");
   const menuIcon = document.getElementById("menu-icon");
   if (sidebar.style.left === "0px") {
-    gsap.to(sidebar, { duration: 0.4, left: "-280px", ease: "power2.out" });
+    sidebar.style.left = "-280px";
     menuIcon.classList.remove("open");
   } else {
-    gsap.to(sidebar, { duration: 0.4, left: "0px", ease: "power2.out" });
+    sidebar.style.left = "0px";
     menuIcon.classList.add("open");
   }
 }
@@ -60,9 +55,11 @@ function resetForm() {
     cropperInstance.destroy();
     cropperInstance = null;
   }
+  undoStack = [];
+  redoStack = [];
 }
 
-/* Toggle light/dark mode */
+/* Toggle light/dark mode without animation */
 function toggleMode() {
   const body = document.body;
   const modeIcon = document.getElementById("mode-icon");
@@ -75,7 +72,6 @@ function toggleMode() {
     body.classList.add("dark-mode");
     modeIcon.innerHTML = '<path d="M12 4V2m0 20v-2m8-8h2M2 12H4m15.364-7.364l1.414-1.414M4.222 19.778l1.414-1.414m12.728 1.414l1.414-1.414M4.222 4.222l1.414 1.414M12 8a4 4 0 100 8 4 4 0 000-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
   }
-  gsap.fromTo(modeIcon, { rotation: 0 }, { duration: 1, rotation: 360, ease: "elastic.out(1, 0.3)" });
 }
 
 /* Handle image upload */
@@ -103,6 +99,9 @@ document.getElementById("upload").addEventListener("change", function (event) {
       originalImageURL = e.target.result;
       const imgElement = document.getElementById("preview-image");
       imgElement.src = originalImageURL;
+      // Ensure preview is visible
+      const previewWrapper = document.getElementById("preview-wrapper");
+      previewWrapper.style.display = "flex";
       if (currentMode === "crop") {
         if (cropperInstance) cropperInstance.destroy();
         cropperInstance = new Cropper(imgElement, {
@@ -118,12 +117,13 @@ document.getElementById("upload").addEventListener("change", function (event) {
           cropBoxMovable: true,
           cropBoxResizable: true
         });
-        gsap.to("#preview-wrapper", { duration: 0.8, opacity: 1, ease: "power2.out" });
-        gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
+        previewWrapper.style.opacity = "1";
+        document.getElementById("download-button").style.opacity = "1";
       }
       if (["convert", "filter", "watermark", "collage", "border"].includes(currentMode)) {
-        gsap.to("#preview-wrapper", { duration: 0.8, opacity: 1, ease: "power2.out" });
+        previewWrapper.style.opacity = "1";
       }
+      updateUndoStack(originalImageURL); // Add the original image to the undo stack
     };
     reader.readAsDataURL(file);
   }
@@ -153,10 +153,11 @@ function resizeImage() {
       canvas.width = width;
       canvas.height = height;
       ctx.drawImage(img, 0, 0, width, height);
+      updateUndoStack(canvas.toDataURL());
       currentCanvas = canvas;
       document.getElementById("preview-image").src = canvas.toDataURL();
-      gsap.to("#preview-wrapper", { duration: 0.8, opacity: 1, ease: "power2.out" });
-      gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
+      document.getElementById("preview-wrapper").style.opacity = "1";
+      document.getElementById("download-button").style.opacity = "1";
     };
   };
   reader.readAsDataURL(file);
@@ -211,8 +212,8 @@ function switchToCropMode() {
       cropBoxMovable: true,
       cropBoxResizable: true
     });
-    gsap.to("#preview-wrapper", { duration: 0.8, opacity: 1, ease: "power2.out" });
-    gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
+    previewWrapper.style.opacity = "1";
+    document.getElementById("download-button").style.opacity = "1";
   }
 }
 
@@ -235,7 +236,7 @@ function switchToConvertMode() {
   const previewWrapper = document.getElementById("preview-wrapper");
   previewWrapper.style.display = "flex";
   previewWrapper.classList.remove("crop-mode");
-  gsap.to("#preview-wrapper", { duration: 0.8, opacity: 1, ease: "power2.out" });
+  previewWrapper.style.opacity = "1";
   
   const imgElement = document.getElementById("preview-image");
   if (originalImageURL) imgElement.src = originalImageURL;
@@ -259,7 +260,7 @@ function switchToFilterMode() {
   const previewWrapper = document.getElementById("preview-wrapper");
   previewWrapper.style.display = "flex";
   previewWrapper.classList.remove("crop-mode");
-  gsap.to("#preview-wrapper", { duration: 0.8, opacity: 1, ease: "power2.out" });
+  previewWrapper.style.opacity = "1";
   
   const imgElement = document.getElementById("preview-image");
   if (originalImageURL) {
@@ -267,8 +268,7 @@ function switchToFilterMode() {
     imgElement.style.filter = "none";
     currentFilterType = "none";
     document.getElementById("filter-slider-container").style.display = "none";
-    // Hide download button until a filter is chosen
-    gsap.to("#download-button", { duration: 0.4, opacity: 0 });
+    document.getElementById("download-button").style.opacity = "0";
   }
 }
 
@@ -291,15 +291,13 @@ function switchToWatermarkMode() {
   if (originalImageURL) {
     imgElement.src = originalImageURL;
     imgElement.style.filter = "none";
-    // Hide download button until watermark is applied
-    gsap.to("#download-button", { duration: 0.4, opacity: 0 });
+    document.getElementById("download-button").style.opacity = "0";
   }
 }
 
 // Collage Mode
 function switchToCollageMode() {
   currentMode = "collage";
-  // Hide the original upload image button
   document.getElementById("image-container").style.display = "none";
   document.getElementById("resize-options").style.display = "none";
   document.getElementById("cropper-controls").style.display = "none";
@@ -334,7 +332,7 @@ function switchToBorderMode() {
   if (originalImageURL) {
     imgElement.src = originalImageURL;
     imgElement.style.filter = "none";
-    gsap.to("#download-button", { duration: 0.4, opacity: 0 });
+    document.getElementById("download-button").style.opacity = "0";
   }
 }
 
@@ -348,8 +346,7 @@ function selectFilterType(filterType) {
     document.getElementById("filter-slider-container").style.display = "block";
     updateFilter();
   }
-  // Show download button now that a filter is chosen
-  gsap.to("#download-button", { duration: 0.8, opacity: 1 });
+  document.getElementById("download-button").style.opacity = "1";
 }
 
 /* Update filter based on slider and update percentage label */
@@ -374,23 +371,24 @@ function updateFilter() {
   }
   currentFilter = filterStr;
   imgElement.style.filter = filterStr;
+  updateUndoStack(imgElement.src);
 }
 
-/* Listen for filter slider changes and update percentage */
+/* Listen for filter slider changes */
 document.getElementById("filter-slider").addEventListener("input", updateFilter);
 
 /* Watermark: Apply watermark with size, opacity and position */
 function applyWatermark() {
   const watermarkText = document.getElementById("watermark-text").value;
+  const watermarkImage = document.getElementById("watermark-image").files[0];
   if (!originalImageURL) {
-    alert("Please upload an image first.");
+    alert("Please upload a base image first.");
     return;
   }
-  if (!watermarkText) {
-    alert("Please enter watermark text.");
+  if (!watermarkText && !watermarkImage) {
+    alert("Please provide either text or an image watermark.");
     return;
   }
-  // Get size and opacity from sliders
   const size = parseInt(document.getElementById("watermark-size-slider").value);
   watermarkFontSize = size;
   const opacityVal = parseInt(document.getElementById("watermark-opacity-slider").value);
@@ -402,62 +400,85 @@ function applyWatermark() {
     canvas.height = img.naturalHeight;
     const ctx = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0);
-    ctx.font = watermarkFontSize + "px Poppins";
-    ctx.fillStyle = "rgba(255,255,255," + opacityDecimal + ")";
     
-    let x, y;
-    switch(watermarkPosition) {
-      case "top-left":
-        ctx.textAlign = "left";
-        ctx.textBaseline = "top";
-        x = 10;
-        y = 10;
-        break;
-      case "top-right":
-        ctx.textAlign = "right";
-        ctx.textBaseline = "top";
-        x = canvas.width - 10;
-        y = 10;
-        break;
-      case "center":
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        x = canvas.width / 2;
-        y = canvas.height / 2;
-        break;
-      case "bottom-left":
-        ctx.textAlign = "left";
-        ctx.textBaseline = "bottom";
-        x = 10;
-        y = canvas.height - 10;
-        break;
-      case "bottom-right":
-      default:
-        ctx.textAlign = "right";
-        ctx.textBaseline = "bottom";
-        x = canvas.width - 10;
-        y = canvas.height - 10;
-        break;
+    if (watermarkText) {
+      ctx.font = watermarkFontSize + "px Poppins";
+      ctx.fillStyle = "rgba(255,255,255," + opacityDecimal + ")";
+      let x, y;
+      switch(watermarkPosition) {
+        case "top-left":
+          ctx.textAlign = "left";
+          ctx.textBaseline = "top";
+          x = 10;
+          y = 10;
+          break;
+        case "top-right":
+          ctx.textAlign = "right";
+          ctx.textBaseline = "top";
+          x = canvas.width - 10;
+          y = 10;
+          break;
+        case "center":
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          x = canvas.width / 2;
+          y = canvas.height / 2;
+          break;
+        case "bottom-left":
+          ctx.textAlign = "left";
+          ctx.textBaseline = "bottom";
+          x = 10;
+          y = canvas.height - 10;
+          break;
+        case "bottom-right":
+        default:
+          ctx.textAlign = "right";
+          ctx.textBaseline = "bottom";
+          x = canvas.width - 10;
+          y = canvas.height - 10;
+          break;
+      }
+      ctx.fillText(watermarkText, x, y);
     }
-    ctx.fillText(watermarkText, x, y);
-    watermarkedImageURL = canvas.toDataURL("image/png");
-    document.getElementById("preview-image").src = watermarkedImageURL;
-    gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
-    gsap.to("#ready-message", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.5 });
-    document.getElementById("ready-message").textContent = "Watermark applied successfully!";
+
+    if (watermarkImage) {
+      const watermarkImg = new Image();
+      watermarkImg.onload = function() {
+        const watermarkWidth = canvas.width * 0.2;
+        const watermarkHeight = watermarkImg.naturalHeight * (watermarkWidth / watermarkImg.naturalWidth);
+        ctx.globalAlpha = opacityDecimal;
+        ctx.drawImage(watermarkImg, canvas.width - watermarkWidth - 10, canvas.height - watermarkHeight - 10, watermarkWidth, watermarkHeight);
+        ctx.globalAlpha = 1;
+        watermarkedImageURL = canvas.toDataURL("image/png");
+        updateUndoStack(watermarkedImageURL);
+        document.getElementById("preview-image").src = watermarkedImageURL;
+        document.getElementById("download-button").style.opacity = "1";
+        document.getElementById("ready-message").style.opacity = "1";
+        document.getElementById("ready-message").textContent = "Watermark applied successfully!";
+      };
+      watermarkImg.src = URL.createObjectURL(watermarkImage);
+    } else {
+      watermarkedImageURL = canvas.toDataURL("image/png");
+      updateUndoStack(watermarkedImageURL);
+      document.getElementById("preview-image").src = watermarkedImageURL;
+      document.getElementById("download-button").style.opacity = "1";
+      document.getElementById("ready-message").style.opacity = "1";
+      document.getElementById("ready-message").textContent = "Watermark applied successfully!";
+    }
   };
   img.src = originalImageURL;
 }
+
 /* Reapply watermark in realtime when size or opacity changes */
 document.getElementById("watermark-size-slider").addEventListener("input", function() {
   document.getElementById("watermark-size-label").textContent = this.value + "px";
-  if(document.getElementById("watermark-text").value) {
+  if(document.getElementById("watermark-text").value || document.getElementById("watermark-image").files[0]) {
     applyWatermark();
   }
 });
 document.getElementById("watermark-opacity-slider").addEventListener("input", function() {
   document.getElementById("watermark-opacity-label").textContent = this.value + "%";
-  if(document.getElementById("watermark-text").value) {
+  if(document.getElementById("watermark-text").value || document.getElementById("watermark-image").files[0]) {
     applyWatermark();
   }
 });
@@ -465,8 +486,7 @@ document.getElementById("watermark-opacity-slider").addEventListener("input", fu
 /* Set watermark position */
 function setWatermarkPosition(pos) {
   watermarkPosition = pos;
-  // Optionally reapply watermark if text exists
-  if(document.getElementById("watermark-text").value) {
+  if(document.getElementById("watermark-text").value || document.getElementById("watermark-image").files[0]) {
     applyWatermark();
   }
 }
@@ -512,9 +532,10 @@ function createCollage() {
       imagesLoaded++;
       if (imagesLoaded === 4) {
         collageImageURL = canvas.toDataURL("image/png");
+        updateUndoStack(collageImageURL);
         document.getElementById("preview-image").src = collageImageURL;
-        gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
-        gsap.to("#ready-message", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.5 });
+        document.getElementById("download-button").style.opacity = "1";
+        document.getElementById("ready-message").style.opacity = "1";
         document.getElementById("ready-message").textContent = "Collage created successfully!";
       }
     };
@@ -522,204 +543,219 @@ function createCollage() {
   }
 }
 
-/* Apply Border using slider value */
+/* Undo/Redo functionality */
+function updateUndoStack(newState) {
+  undoStack.push({ url: newState });
+  redoStack = [];
+}
+
+function undoAction() {
+  if (undoStack.length > 1) {
+    redoStack.push(undoStack.pop());
+    const lastState = undoStack[undoStack.length - 1];
+    document.getElementById("preview-image").src = lastState.url;
+    if (currentMode === "filter") {
+      document.getElementById("preview-image").style.filter = lastState.filter || "none";
+    }
+  } else {
+    alert("No more actions to undo!");
+  }
+}
+
+function redoAction() {
+  if (redoStack.length > 0) {
+    undoStack.push(redoStack.pop());
+    const nextState = undoStack[undoStack.length - 1];
+    document.getElementById("preview-image").src = nextState.url;
+    if (currentMode === "filter") {
+      document.getElementById("preview-image").style.filter = nextState.filter || "none";
+    }
+  } else {
+    alert("No more actions to redo!");
+  }
+}
+
+/* Cropper actions: rotate, zoom, reset */
+function cropperAction(action, value) {
+  if (!cropperInstance) return;
+  switch(action) {
+    case 'rotate':
+      cropperInstance.rotate(value);
+      break;
+    case 'zoom':
+      cropperInstance.zoom(value);
+      break;
+    case 'reset':
+      cropperInstance.reset();
+      break;
+  }
+}
+
+/* Set aspect ratio for cropper */
+function setAspectRatio(ratio) {
+  if (!cropperInstance) return;
+  cropperInstance.setAspectRatio(ratio);
+}
+
+/* Apply border using canvas */
 function applyBorder() {
   if (!originalImageURL) {
     alert("Please upload an image first.");
     return;
   }
-  const thickness = parseInt(document.getElementById("border-thickness-slider").value);
+  const borderThickness = document.getElementById("border-thickness-slider").value;
   const borderColor = document.getElementById("border-color").value;
   const img = new Image();
+  img.src = originalImageURL;
   img.onload = function() {
     const canvas = document.createElement("canvas");
-    canvas.width = img.naturalWidth + 2 * thickness;
-    canvas.height = img.naturalHeight + 2 * thickness;
+    canvas.width = img.naturalWidth + parseInt(borderThickness) * 2;
+    canvas.height = img.naturalHeight + parseInt(borderThickness) * 2;
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = borderColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, thickness, thickness);
+    ctx.drawImage(img, borderThickness, borderThickness);
     borderedImageURL = canvas.toDataURL("image/png");
+    updateUndoStack(borderedImageURL);
     document.getElementById("preview-image").src = borderedImageURL;
-    gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
-    gsap.to("#ready-message", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.5 });
-    document.getElementById("ready-message").textContent = "Border applied successfully!";
+    document.getElementById("download-button").style.opacity = "1";
   };
-  img.src = originalImageURL;
 }
 
-/* Toggle More Conversion Options without animations */
-function toggleMoreOptions() {
-  const moreOptions = document.getElementById("more-convert-options");
-  if (moreOptions.style.display === "flex") {
-    moreOptions.style.display = "none";
-  } else {
-    moreOptions.style.display = "flex";
-  }
-}
-
-/* Convert Image */
-function convertTo(targetType) {
+/* Convert image type */
+function convertTo(type) {
   if (!originalImageURL) {
     alert("Please upload an image first.");
     return;
   }
   const img = new Image();
+  img.src = originalImageURL;
   img.onload = function() {
     const canvas = document.createElement("canvas");
     canvas.width = img.naturalWidth;
     canvas.height = img.naturalHeight;
     const ctx = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0);
-    let mimeType;
-    if (targetType === "jpeg") mimeType = "image/jpeg";
-    else if (targetType === "png") mimeType = "image/png";
-    else if (targetType === "webp") mimeType = "image/webp";
-    else if (targetType === "gif") mimeType = "image/gif";
-    else if (targetType === "bmp") mimeType = "image/bmp";
-    else if (targetType === "ico") mimeType = "image/x-icon";
-    else mimeType = "image/png";
-    const dataURL = canvas.toDataURL(mimeType);
-    convertedFileType = targetType;
-    document.getElementById("loading-spinner").style.display = "block";
-    const readyMsg = document.getElementById("ready-message");
-    readyMsg.textContent = "Processing conversion...";
-    setTimeout(function() {
-      document.getElementById("loading-spinner").style.display = "none";
-      document.getElementById("preview-image").src = dataURL;
-      let ext = (targetType === "jpeg") ? ".jpg" : "." + targetType;
-      readyMsg.textContent = "Your image is successfully converted to " + ext + " and is ready to be downloaded.";
-      convertedImageURL = dataURL;
-      gsap.to("#download-button", { duration: 0.8, opacity: 1, ease: "power2.out" });
-      gsap.to("#ready-message", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.5 });
-    }, 2000);
+    convertedImageURL = canvas.toDataURL("image/" + type);
+    updateUndoStack(convertedImageURL);
+    document.getElementById("preview-image").src = convertedImageURL;
+    document.getElementById("download-button").style.opacity = "1";
   };
-  img.src = originalImageURL;
 }
 
-/* Cropper Actions */
-function cropperAction(action, param) {
-  if (!cropperInstance) {
-    alert("Cropper is not initialized.");
-    return;
-  }
-  if (action === "rotate") cropperInstance.rotate(param);
-  else if (action === "zoom") cropperInstance.zoom(param);
-  else if (action === "reset") cropperInstance.reset();
-}
-
-/* Set Crop Aspect Ratio */
-function setAspectRatio(ratio) {
-  if (!cropperInstance) {
-    alert("Cropper is not initialized.");
-    return;
-  }
-  cropperInstance.setAspectRatio(ratio);
-}
-
-/* Download Image based on Mode */
-function downloadImage() {
-  if (currentMode === "crop") {
-    if (!cropperInstance) {
-      alert("Please crop your image first.");
-      return;
-    }
-    const croppedCanvas = cropperInstance.getCroppedCanvas();
-    if (!croppedCanvas) {
-      alert("Crop your image first.");
-      return;
-    }
-    const link = document.createElement("a");
-    link.href = croppedCanvas.toDataURL("image/png");
-    link.download = "cropped-image.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
-  } else if (currentMode === "convert") {
-    if (!convertedImageURL) {
-      alert("Please convert the image first.");
-      return;
-    }
-    const link = document.createElement("a");
-    link.href = convertedImageURL;
-    let ext = (convertedFileType === "jpeg") ? "jpg" : convertedFileType;
-    link.download = "converted-image." + ext;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
-  } else if (currentMode === "filter") {
-    if (!originalImageURL) {
-      alert("Please upload an image first.");
-      return;
-    }
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = function() {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
-      const ctx = canvas.getContext("2d");
-      ctx.filter = currentFilter;
-      ctx.drawImage(img, 0, 0);
-      const dataURL = canvas.toDataURL("image/png");
-      const link = document.createElement("a");
-      link.href = dataURL;
-      link.download = "filtered-image.png";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
-    };
-    img.src = originalImageURL;
-  } else if (currentMode === "watermark") {
-    if (!watermarkedImageURL) {
-      alert("Please apply watermark first.");
-      return;
-    }
-    const link = document.createElement("a");
-    link.href = watermarkedImageURL;
-    link.download = "watermarked-image.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
-  } else if (currentMode === "collage") {
-    if (!collageImageURL) {
-      alert("Please create a collage first.");
-      return;
-    }
-    const link = document.createElement("a");
-    link.href = collageImageURL;
-    link.download = "collage-image.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
-  } else if (currentMode === "border") {
-    if (!borderedImageURL) {
-      alert("Please apply border first.");
-      return;
-    }
-    const link = document.createElement("a");
-    link.href = borderedImageURL;
-    link.download = "bordered-image.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
+/* Toggle more conversion options */
+function toggleMoreOptions() {
+  const moreOptions = document.getElementById("more-convert-options");
+  if (moreOptions.style.display === "none" || moreOptions.style.display === "") {
+    moreOptions.style.display = "flex";
   } else {
-    if (!currentCanvas) {
-      alert("Please resize an image first.");
-      return;
-    }
-    const link = document.createElement("a");
-    link.href = currentCanvas.toDataURL("image/png");
-    link.download = "resized-image.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    gsap.fromTo("#download-button", { scale: 1 }, { duration: 0.2, scale: 1.1, yoyo: true, repeat: 1, ease: "power1.inOut" });
+    moreOptions.style.display = "none";
   }
 }
+
+/* Download the final image */
+function downloadImage() {
+  if (currentMode === "crop" && cropperInstance) {
+    const canvas = cropperInstance.getCroppedCanvas();
+    const link = document.createElement("a");
+    link.download = "cropped_image.png";
+    link.href = canvas.toDataURL();
+    link.click();
+  } else {
+    const link = document.createElement("a");
+    link.download = "edited_image.png";
+    link.href = document.getElementById("preview-image").src;
+    link.click();
+  }
+}
+
+/* Initialize Drag and Drop */
+function initDragAndDrop() {
+  const dropZone = document.getElementById('drag-drop-zone');
+
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, preventDefaults, false);
+  });
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropZone.addEventListener(eventName, highlight, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, unhighlight, false);
+  });
+
+  dropZone.addEventListener('drop', handleDrop, false);
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  function highlight(e) {
+    dropZone.classList.add('dragover');
+  }
+
+  function unhighlight(e) {
+    dropZone.classList.remove('dragover');
+  }
+
+  function handleDrop(e) {
+    let dt = e.dataTransfer;
+    let files = dt.files;
+    handleFiles(files);
+  }
+}
+
+/* Handle dropped files */
+function handleFiles(files) {
+  ([...files]).forEach(uploadFile);
+}
+
+/* Upload file via drag-and-drop */
+function uploadFile(file) {
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    originalImageURL = e.target.result;
+    const imgElement = document.getElementById("preview-image");
+    imgElement.src = originalImageURL;
+    document.getElementById("file-name").textContent = file.name;
+    if (currentMode === "crop") {
+      if (cropperInstance) cropperInstance.destroy();
+      cropperInstance = new Cropper(imgElement, {});
+    }
+    updateUndoStack(originalImageURL);
+    // Ensure preview is visible
+    const previewWrapper = document.getElementById("preview-wrapper");
+    previewWrapper.style.display = "flex";
+    previewWrapper.style.opacity = "1";
+  };
+  reader.readAsDataURL(file);
+}
+
+/* Update preview for different modes */
+function updatePreview() {
+  switch(currentMode) {
+    case "filter":
+      updateFilter();
+      break;
+    case "watermark":
+      applyWatermark();
+      break;
+    case "collage":
+      if (collageImages.every(img => img !== null)) {
+        createCollage();
+      }
+      break;
+    case "border":
+      applyBorder();
+      break;
+  }
+}
+
+/* Initialize when DOM content is loaded */
+document.addEventListener('DOMContentLoaded', () => {
+  initDragAndDrop();
+  document.getElementById('undo-action').addEventListener('click', undoAction);
+  document.getElementById('redo-action').addEventListener('click', redoAction);
+});
